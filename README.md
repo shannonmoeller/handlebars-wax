@@ -1,5 +1,7 @@
 # `handlebars-registrar`
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/shannonmoeller/handlebars-registrar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url]
 
 Effortless wiring of Handlebars helpers and partials.
