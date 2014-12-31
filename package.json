@@ -1,6 +1,6 @@
 {
   "name": "handlebars-registrar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Finds and registers helpers and paritals on an instance of Handlebars.",
   "keywords": [
     "handlebars",
@@ -32,7 +32,8 @@
     "gulp-jscs": "^1.3.1",
     "gulp-jshint": "^1.9.0",
     "gulp-mocha": "^2.0.0",
-    "handlebars": "^2.0.0"
+    "handlebars": "^2.0.0",
+    "jshint-stylish": "^1.0.0"
   },
   "engines": {
     "node": ">= 0.10"

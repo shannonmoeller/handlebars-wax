@@ -81,7 +81,12 @@ function registerModule(method, file) {
 		name = file.value.slice(0, -extension.length);
 
 		if (method === 'registerHelper') {
-			/** Replace path separators with hyphens to avoid having to use the [square-bracket syntax](http://handlebarsjs.com/expressions.html#basic-blocks) for helpers. */
+			/**
+			 * Replace path separators with hyphens to avoid having to use the
+			 * [square-bracket syntax][square] when referencing helpers.
+			 *
+			 * [square]: http://handlebarsjs.com/expressions.html#basic-blocks
+			 */
 			name = name.replace(pathSepPattern, '-');
 		}
 
