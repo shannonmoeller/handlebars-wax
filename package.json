@@ -1,0 +1,40 @@
+{
+  "name": "handlebars-registrar",
+  "version": "1.0.0",
+  "description": "Finds and registers helpers and paritals on an instance of Handlebars.",
+  "keywords": [
+    "handlebars",
+    "hbs",
+    "register",
+    "registerHelpers",
+    "registerPartials"
+  ],
+  "homepage": "https://github.com/shannonmoeller/handlebars-registrar",
+  "bugs": "https://github.com/shannonmoeller/handlebars-registrar/issues",
+  "license": "MIT",
+  "author": "Shannon Moeller <me@shannonmoeller.com> (http://shannonmoeller.com)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shannonmoeller/handlebars-registrar.git"
+  },
+  "scripts": {
+    "coveralls": "gulp cover && cat ./coverage/lcov.info | coveralls",
+    "test": "gulp test"
+  },
+  "dependencies": {
+    "globs": "^0.1.2"
+  },
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "gulp": "^3.8.10",
+    "gulp-istanbul": "^0.5.0",
+    "gulp-jscs": "^1.3.1",
+    "gulp-jshint": "^1.9.0",
+    "gulp-mocha": "^2.0.0",
+    "handlebars": "^2.0.0"
+  },
+  "engines": {
+    "node": ">= 0.10"
+  }
+}
