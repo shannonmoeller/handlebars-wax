@@ -126,7 +126,7 @@ Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 [coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/handlebars-registrar/master.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/shannonmoeller/handlebars-registrar
 [downloads-img]: http://img.shields.io/npm/dm/handlebars-registrar.svg?style=flat-square
-[gitter-img]:    http://img.shields.io/badge/chat-shannonmoeller/handlebars-registrar-blue.svg?style=flat-square
+[gitter-img]:    http://img.shields.io/badge/chat-shannonmoeller/handlebars--registrar-blue.svg?style=flat-square
 [gitter-url]:    https://gitter.im/shannonmoeller/handlebars-registrar
 [gittip-img]:    http://img.shields.io/gittip/shannonmoeller.svg?style=flat-square
 [gittip-url]:    https://www.gittip.com/shannonmoeller
