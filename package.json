@@ -1,7 +1,7 @@
 {
   "name": "handlebars-registrar",
-  "version": "1.0.1",
-  "description": "Finds and registers helpers and paritals on an instance of Handlebars.",
+  "version": "1.0.2",
+  "description": "Effortless wiring of Handlebars helpers and partials.",
   "keywords": [
     "handlebars",
     "hbs",

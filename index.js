@@ -53,6 +53,8 @@ function findAll(patterns) {
 }
 
 function requireModule(file) {
+	file = path.resolve(process.cwd(), file);
+
 	// Clear cached module, if any
 	delete require.cache[require.resolve(file)];
 
@@ -99,11 +101,11 @@ function registerModule(method, file) {
 }
 
 /**
- * Finds and registers helpers and paritals on an instance of Handlebars.
+ * Effortless wiring of Handlebars helpers and partials.
  *
  * @type {Function}
  * @param {Object} handlebars Handlebars instance.
- * @param {Object} options Handlebars instance.
+ * @param {Object} options Plugin options.
  * @param {String|Array.<String>} options.helpers One or more glob strings matching helpers.
  * @param {String|Array.<String>} options.partials One or more glob strings matching partials.
  * @return {Object} Handlebars instance.
