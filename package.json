@@ -19,13 +19,14 @@
     "url": "https://github.com/shannonmoeller/handlebars-registrar.git"
   },
   "scripts": {
-    "coveralls": "gulp cover && cat ./coverage/lcov.info | coveralls",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "gulp test"
   },
   "dependencies": {
     "globs": "^0.1.2"
   },
   "devDependencies": {
+    "coveralls": "^2.11.2",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.10",
     "gulp-istanbul": "^0.5.0",
