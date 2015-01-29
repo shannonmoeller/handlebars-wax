@@ -1,6 +1,6 @@
 'use strict';
 
-var globs = require('globs'),
+var glob = require('globby'),
 	path = require('path'),
 	pathSepPattern = /[ \/.-]+/g; // matches spaces, forward slashes, dots, and hyphens
 
@@ -49,7 +49,7 @@ function normalizePaths(paths) {
 
 function findAll(patterns) {
 	// Glob patterns and normalize returned paths
-	return normalizePaths(globs.sync(patterns));
+	return normalizePaths(glob.sync(patterns));
 }
 
 function requireModule(file) {
