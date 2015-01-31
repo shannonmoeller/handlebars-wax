@@ -33,6 +33,10 @@ registrar(handlebars, {
 
 #### Options
 
+### `cwd` `{String}`
+
+Current working directory. Defaults to `process.cwd()`.
+
 ### `helpers` `{String|Array.<String>}`
 
 Glob string or array of glob strings matching helper files. Helper files are JavaScript files that define one or more helpers.
