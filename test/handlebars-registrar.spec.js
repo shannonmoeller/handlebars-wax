@@ -89,4 +89,25 @@ describe('handlebars-registrar e2e', function () {
 		expect(hb.partials.item).to.be.a('string');
 		expect(hb.partials.link).to.be.a('string');
 	});
+
+	it('should allow setting the cwd', function () {
+		var hb = handlebars.create();
+
+		handlebarsRegistrar(hb, {
+			cwd: __dirname,
+			helpers: 'fixtures/helpers/function/**/*.js',
+			partials: 'fixtures/partials/raw/**/*.hbs'
+		});
+
+		expect(hb.helpers.lower).to.be.a('function');
+		expect(hb.helpers.upper).to.be.a('function');
+		expect(hb.helpers['flow-lest']).to.be.a('function');
+		expect(hb.helpers['flow-when']).to.be.a('function');
+		expect(hb.helpers.empty).to.be(undefined);
+
+		expect(hb.partials.layout).to.be.a('function');
+		expect(hb.partials['layout-2col']).to.be.a('function');
+		expect(hb.partials['components/item']).to.be.a('function');
+		expect(hb.partials['components/link']).to.be.a('function');
+	});
 });

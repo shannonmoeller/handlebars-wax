@@ -47,13 +47,15 @@ function normalizePaths(paths) {
 	return objects;
 }
 
-function findAll(patterns) {
+function findAll(cwd, patterns) {
 	// Glob patterns and normalize returned paths
-	return normalizePaths(glob.sync(patterns));
+	return normalizePaths(glob.sync(patterns, {
+		cwd: cwd
+	}));
 }
 
-function requireModule(file) {
-	file = path.resolve(process.cwd(), file);
+function requireModule(cwd, file) {
+	file = path.resolve(cwd, file);
 
 	// Clear cached module, if any
 	delete require.cache[require.resolve(file)];
@@ -62,23 +64,23 @@ function requireModule(file) {
 	return require(file);
 }
 
-function registerModule(method, file) {
+function registerModule(method, cwd, file) {
 	/*jshint validthis: true */
 
 	var extension, name,
-		module = requireModule(file.oldValue);
+		fileModule = requireModule(cwd, file.oldValue);
 
-	if (!module) {
+	if (!fileModule) {
 		return;
 	}
 
-	if (typeof module.register === 'function') {
-		module.register(this);
+	if (typeof fileModule.register === 'function') {
+		fileModule.register(this);
 
 		return;
 	}
 
-	if (typeof module === 'function') {
+	if (typeof fileModule === 'function') {
 		extension = path.extname(file.value);
 		name = file.value.slice(0, -extension.length);
 
@@ -92,12 +94,12 @@ function registerModule(method, file) {
 			name = name.replace(pathSepPattern, '-');
 		}
 
-		this[method](name, module);
+		this[method](name, fileModule);
 
 		return;
 	}
 
-	this[method](module);
+	this[method](fileModule);
 }
 
 /**
@@ -106,6 +108,7 @@ function registerModule(method, file) {
  * @type {Function}
  * @param {Object} handlebars Handlebars instance.
  * @param {Object} options Plugin options.
+ * @param {String} options.cwd Current working directory. Defaults to `process.cwd()`.
  * @param {String|Array.<String>} options.helpers One or more glob strings matching helpers.
  * @param {String|Array.<String>} options.partials One or more glob strings matching partials.
  * @return {Object} Handlebars instance.
@@ -113,15 +116,25 @@ function registerModule(method, file) {
 function registrar(handlebars, options) {
 	options = options || {};
 
-	var helpers = options.helpers,
+	var register,
+		cwd = options.cwd || process.cwd(),
+		helpers = options.helpers,
 		partials = options.partials;
 
 	if (helpers) {
-		findAll(helpers).forEach(registerModule.bind(handlebars, 'registerHelper'));
+		// Setup helper regsiter method
+		register = registerModule.bind(handlebars, 'registerHelper', cwd);
+
+		// Register helpers
+		findAll(cwd, helpers).forEach(register);
 	}
 
 	if (partials) {
-		findAll(partials).forEach(registerModule.bind(handlebars, 'registerPartial'));
+		// Setup partial regsiter method
+		register = registerModule.bind(handlebars, 'registerPartial', cwd);
+
+		// Register partials
+		findAll(cwd, partials).forEach(register);
 	}
 
 	return handlebars;
