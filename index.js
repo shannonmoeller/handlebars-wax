@@ -1,6 +1,7 @@
 'use strict';
 
 var glob = require('globby'),
+	handlebars = require('handlebars'),
 	path = require('path'),
 	pathSepPattern = /[ \/.-]+/g; // matches spaces, forward slashes, dots, and hyphens
 
@@ -106,14 +107,13 @@ function registerModule(method, cwd, file) {
  * Effortless wiring of Handlebars helpers and partials.
  *
  * @type {Function}
- * @param {Object} handlebars Handlebars instance.
  * @param {Object} options Plugin options.
  * @param {String} options.cwd Current working directory. Defaults to `process.cwd()`.
  * @param {String|Array.<String>} options.helpers One or more glob strings matching helpers.
  * @param {String|Array.<String>} options.partials One or more glob strings matching partials.
  * @return {Object} Handlebars instance.
  */
-function registrar(handlebars, options) {
+function registrar(options) {
 	options = options || {};
 
 	var register,
