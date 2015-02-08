@@ -1,20 +1,16 @@
 'use strict';
 
 var handlebarsRegistrar = require('../index'),
-	handlebars = require('handlebars'),
+	hb = require('handlebars'),
 	expect = require('expect.js');
 
 describe('handlebars-registrar e2e', function () {
 	it('should use default options', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb);
+		handlebarsRegistrar();
 	});
 
 	it('should register simple helpers', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			helpers: __dirname + '/fixtures/helpers/function/**/*.js'
 		});
 
@@ -26,9 +22,7 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should register an object of helpers', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			helpers: __dirname + '/fixtures/helpers/object/*.js'
 		});
 
@@ -39,9 +33,7 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should defer registration of helpers', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			helpers: __dirname + '/fixtures/helpers/deferred/*.js'
 		});
 
@@ -52,9 +44,7 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should register raw partials', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			partials: __dirname + '/fixtures/partials/raw/**/*.hbs'
 		});
 
@@ -65,9 +55,7 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should register an object of partials', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			partials: __dirname + '/fixtures/partials/object/*.js'
 		});
 
@@ -78,9 +66,7 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should defer registration of partials', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			partials: __dirname + '/fixtures/partials/deferred/*.js'
 		});
 
@@ -91,9 +77,7 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should allow setting the cwd', function () {
-		var hb = handlebars.create();
-
-		handlebarsRegistrar(hb, {
+		handlebarsRegistrar({
 			cwd: __dirname,
 			helpers: 'fixtures/helpers/function/**/*.js',
 			partials: 'fixtures/partials/raw/**/*.hbs'
