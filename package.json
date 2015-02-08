@@ -22,6 +22,9 @@
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "gulp test"
   },
+  "engines": {
+    "npm": ">2.2.0"
+  },
   "dependencies": {
     "globby": "^1.1.0"
   },
