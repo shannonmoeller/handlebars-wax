@@ -119,7 +119,7 @@ Standards for this project, including tests, code coverage, and semantics are en
 
 ### Test
 
-    $ gulp test
+    $ npm test
 
 ----
 
