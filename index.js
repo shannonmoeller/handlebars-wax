@@ -3,8 +3,7 @@
 var requireGlob = require('require-glob'),
 	pathSepPattern = /[ \/.-]+/g; // matches spaces, forward slashes, dots, and hyphens
 
-function registerModule(method, obj, mod) {
-	// jshint validthis:true
+function registerModule(handlebars, method, obj, mod) {
 	var name = mod && mod.shortPath,
 		content = mod && mod.exports;
 
@@ -13,7 +12,7 @@ function registerModule(method, obj, mod) {
 	}
 
 	if (typeof content.register === 'function') {
-		content.register(this);
+		content.register(handlebars);
 
 		return;
 	}
@@ -23,12 +22,12 @@ function registerModule(method, obj, mod) {
 			name = name.replace(pathSepPattern, '-');
 		}
 
-		this[method](name, content);
+		handlebars[method](name, content);
 
 		return;
 	}
 
-	this[method](content);
+	handlebars[method](content);
 }
 
 /**
@@ -48,12 +47,12 @@ function registrar(handlebars, options) {
 		partials = options.partials;
 
 	if (helpers) {
-		options.reducer = registerModule.bind(handlebars, 'registerHelper');
+		options.reducer = registerModule.bind(null, handlebars, 'registerHelper');
 		requireGlob.sync(helpers, options);
 	}
 
 	if (partials) {
-		options.reducer = registerModule.bind(handlebars, 'registerPartial');
+		options.reducer = registerModule.bind(null, handlebars, 'registerPartial');
 		requireGlob.sync(partials, options);
 	}
 
