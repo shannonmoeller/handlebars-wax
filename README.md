@@ -37,9 +37,9 @@ registrar(handlebars, {
 
 Current working directory. Defaults to `process.cwd()`.
 
-### `helpers` `{String|Array.<String>}`
+### `helpers` `{String|Array.<String>|Object|Function}`
 
-Glob string or array of glob strings matching helper files. Helper files are JavaScript files that define one or more helpers.
+An [object of helpers](http://handlebarsjs.com/reference.html#base-registerHelper), a glob string matching helper files, an array of glob strings, or a function returning any of these. Globbed helper files are JavaScript files that define one or more helpers.
 
 As a single helper function:
 
@@ -78,9 +78,9 @@ module.exports.register = function (Handlebars) {
 };
 ```
 
-### `partials` `{String|Array.<String>}`
+### `partials` `{String|Array.<String>|Object|Function}`
 
-Glob string or array of glob strings matching partial files. Partial files are either standalone Handlebars files, or JavaScript files that define one or more helpers.
+An [object of partials](http://handlebarsjs.com/reference.html#base-registerPartial), a glob string matching partial files, an array of glob strings, or a function returning any of these. Globbed partial files are either standalone Handlebars files, or JavaScript files that define one or more helpers.
 
 As a standalone Handlebars file:
 

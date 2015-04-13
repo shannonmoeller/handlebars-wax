@@ -46,6 +46,8 @@ function registrar(handlebars, options) {
 	var helpers = options.helpers,
 		partials = options.partials;
 
+	options.handlebars = handlebars;
+
 	if (helpers) {
 		options.reducer = registerModule.bind(null, handlebars, 'registerHelper');
 		requireGlob.sync(helpers, options);
