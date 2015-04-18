@@ -36,8 +36,11 @@ function registerModule(handlebars, method, obj, mod) {
  * @type {Function}
  * @param {Object} handlebars Handlebars instance.
  * @param {Object} options Plugin options.
+ * @param {Boolean} options.bustCache Whether to force the reload of a module by deleting it from the cache.
  * @param {String|Array.<String>} options.helpers One or more glob strings matching helpers.
+ * @param {String|Array.<String>} options.helperReducer Custom reducer for registering helpers.
  * @param {String|Array.<String>} options.partials One or more glob strings matching partials.
+ * @param {String|Array.<String>} options.partialReducer Custom reducer for registering partials.
  * @return {Object} Handlebars instance.
  */
 function registrar(handlebars, options) {
@@ -49,12 +52,18 @@ function registrar(handlebars, options) {
 	options.handlebars = handlebars;
 
 	if (helpers) {
-		options.reducer = registerModule.bind(null, handlebars, 'registerHelper');
+		options.reducer = options.helperReducer || (
+			registerModule.bind(null, handlebars, 'registerHelper')
+		);
+
 		requireGlob.sync(helpers, options);
 	}
 
 	if (partials) {
-		options.reducer = registerModule.bind(null, handlebars, 'registerPartial');
+		options.reducer = options.partialsReducer || (
+			registerModule.bind(null, handlebars, 'registerPartial')
+		);
+
 		requireGlob.sync(partials, options);
 	}
 
