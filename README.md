@@ -44,7 +44,7 @@ Whether to force a reload of helpers and partials by deleting them from the cach
 
 Current working directory. Defaults to `process.cwd()`.
 
-### `helpers` `{Object|String|Array.<String>|Function}`
+### `helpers` `{String|Array.<String>|Object|Function}`
 
 A glob string matching helper files, an array of glob strings, an [object of helpers](http://handlebarsjs.com/reference.html#base-registerHelper), or a function returning any of these. Globbed helper files are JavaScript files that define one or more helpers.
 
@@ -71,7 +71,7 @@ helpers: {
 }
 ```
 
-When including helpers using globs, modules may export a single helper function. The helper will be named according to the file path and name without the extension. So a helper with a path of `string/upper.js` will be named `string-upper`. Note that path separators are replaced with hyphens to avoid having to use [square brackets](http://handlebarsjs.com/expressions.html#basic-blocks).
+When including helpers using globs, modules may export a single helper function. Each helper will be named according to the file path and name without the extension. So a helper with a path of `string/upper.js` will be named `string-upper`. Note that path separators are replaced with hyphens to avoid having to use [square brackets](http://handlebarsjs.com/expressions.html#basic-blocks).
 
 ```js
 // lower.js
@@ -111,7 +111,7 @@ module.exports.regsiter = function (handlebars) {
 };
 ```
 
-### `partials` `{Object|String|Array.<String>|Function}`
+### `partials` `{String|Array.<String>|Object|Function}`
 
 A glob string matching partial files, an array of glob strings, an [object of partials](http://handlebarsjs.com/reference.html#base-registerPartial), or a function returning any of these. Globbed partial files are either standalone Handlebars files, or JavaScript files that define one or more helpers.
 
@@ -133,7 +133,7 @@ partials: {
 }
 ```
 
-When including paritals using globs, partials may be handlebars file. The partial will be named according to the file path and name without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`.
+When including paritals using globs, partials may be standalone handlebars files. Each partial will be named according to the file path and name without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`.
 
 ```handlebars
 {{!-- link.hbs --}}
