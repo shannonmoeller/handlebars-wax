@@ -2,7 +2,10 @@
 
 [![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url]
 
-Effortless wiring of Handlebars helpers and partials.
+Effortless wiring of Handlebars helpers and partials. Used internally by [`gulp-hb`][gulp-hb] and [`grunt-hb`][grunt-hb].
+
+[gulp-hb]: https://github.com/shannonmoeller/gulp-hb
+[grunt-hb]: https://github.com/shannonmoeller/grunt-hb
 
 ## Install
 
