@@ -39,6 +39,13 @@ console.log(handlbars.partials);
 
 #### Options
 
+- [`bustCache` `{Boolean}` (default: `false`)](#bustcache-boolean-default-false)
+- [`cwd` `{String}`](#cwd-string)
+- [`helpers` `{String|Array.<String>|Object|Function}`](#helpers-string%7Carraystring%7Cobject%7Cfunction)
+- [`parseHelperName` `{Function(Object):String}`](#parsehelpername-functionobjectstring)
+- [`partials` `{String|Array.<String>|Object|Function}`](#partials-string%7Carraystring%7Cobject%7Cfunction)
+- [`parsePartialName` `{Function(Object):String}`](#parsepartialname-functionobjectstring)
+
 ### `bustCache` `{Boolean}` (default: `false`)
 
 Whether to force a reload of helpers and partials by deleting them from the cache. Useful inside watch tasks.
