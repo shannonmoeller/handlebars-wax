@@ -3,9 +3,19 @@
 var requireGlob = require('require-glob'),
 	pathSepPattern = /[ \/.-]+/g; // matches spaces, forward slashes, dots, and hyphens
 
-function registerModule(handlebars, method, obj, mod) {
-	var name = mod && mod.shortPath,
-		content = mod && mod.exports;
+function parseHelperName(file) {
+	var shortPath = file && file.shortPath;
+
+	return shortPath.replace(pathSepPattern, '-');
+}
+
+function parsePartialName(file) {
+	return file && file.shortPath;
+}
+
+function registerModule(method, obj, file) {
+	var handlebars = this.handlebars,
+		content = file && file.exports;
 
 	if (!content) {
 		return;
@@ -18,11 +28,7 @@ function registerModule(handlebars, method, obj, mod) {
 	}
 
 	if (typeof content === 'function') {
-		if (method === 'registerHelper') {
-			name = name.replace(pathSepPattern, '-');
-		}
-
-		handlebars[method](name, content);
+		this.handlebars[method](this.keygen(file), content);
 
 		return;
 	}
@@ -39,8 +45,10 @@ function registerModule(handlebars, method, obj, mod) {
  * @param {Boolean=} options.bustCache Whether to force the reload of modules by deleting them from the cache.
  * @param {String=} options.cwd Current working directory. Defaults to `process.cwd()`.
  * @param {Object|String|Array.<String>|Function=} options.helpers One or more glob strings matching helpers.
+ * @param {Function=} options.parseHelperName Custom name generator for helpers.
  * @param {Function=} options.helpersReducer Custom reducer for registering helpers.
  * @param {Object|String|Array.<String>|Function=} options.partials One or more glob strings matching partials.
+ * @param {Function=} options.parsePartialName Custom name generator for partials.
  * @param {Function=} options.partialsReducer Custom reducer for registering partials.
  * @return {Object} Handlebars instance.
  */
@@ -55,18 +63,22 @@ function registrar(handlebars, options) {
 
 	// Register helpers
 	if (helpers) {
-		options.reducer = options.helpersReducer || (
-			registerModule.bind(null, handlebars, 'registerHelper')
-		);
+		options.keygen = options.parseHelperName
+			|| parseHelperName;
+
+		options.reducer = options.helpersReducer
+			|| registerModule.bind(options, 'registerHelper');
 
 		requireGlob.sync(helpers, options);
 	}
 
 	// Register partials
 	if (partials) {
-		options.reducer = options.partialsReducer || (
-			registerModule.bind(null, handlebars, 'registerPartial')
-		);
+		options.keygen = options.parsePartialName
+			|| parsePartialName;
+
+		options.reducer = options.partialsReducer
+			|| registerModule.bind(options, 'registerPartial');
 
 		requireGlob.sync(partials, options);
 	}
