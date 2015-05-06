@@ -74,7 +74,7 @@ helpers: {
 }
 ```
 
-When including helpers using globs, modules may export a single helper function. Each helper will be named according to the file path and name without the extension. So a helper with a path of `string/upper.js` will be named `string-upper`. Note that path separators are replaced with hyphens to avoid having to use [square brackets](http://handlebarsjs.com/expressions.html#basic-blocks).
+When including helpers using globs, modules may export a single helper function. These helpers will be named by calling `parseHelperName`.
 
 ```js
 // lower.js
@@ -102,15 +102,31 @@ If you need a reference to the handlebars instance inside of a helper, you may e
 
 ```js
 // helpers.js
-module.exports.regsiter = function (handlebars) {
+module.exports.register = function (handlebars) {
     handlebars.registerHelper('link', function(text, url) {
         text = handlebars.Utils.escapeExpression(text);
         url  = handlebars.Utils.escapeExpression(url);
-        
+
         var result = '<a href="' + url + '">' + text + '</a>';
-        
+
         return new handlebars.SafeString(result);
     });
+};
+```
+
+### `parseHelperName` `Function(file) : String`
+
+By default, standalone helpers will be named according to the shortest unique file path without the extension. So a helper with a path of `string/upper.js` will be named `string-upper`. Note that path separators are replaced with hyphens to avoid having to use [square brackets](http://handlebarsjs.com/expressions.html#basic-blocks). You may optionally provide your own name parser. This is helpful in cases where you may wish to exclude the directory names.
+
+```js
+parseHelperName: = function (file) {
+    // this.handlebars <- current handlebars instance
+    // file.path       <- full system path with extension
+    // file.shortPath  <- shortest unique path without extension
+    // file.exports    <- result of requiring the helper
+
+    // Ignore directory names
+    return path.basename(file.path);
 };
 ```
 
@@ -136,7 +152,7 @@ partials: {
 }
 ```
 
-When including paritals using globs, partials may be standalone handlebars files. Each partial will be named according to the file path and name without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`.
+When including paritals using globs, partials may be standalone handlebars files. Each partial will be named by calling `parsePartialName`.
 
 ```handlebars
 {{!-- link.hbs --}}
@@ -157,11 +173,27 @@ If you need a reference to the handlebars instance when defining a partial, you 
 
 ```js
 // partials.js
-module.exports.regsiter = function (handlebars) {
+module.exports.register = function (handlebars) {
     handlebars.registerPartial({
         item: '<li>{{label}}</li>',
         link: '<a href="{{url}}">{{label}}</a>'
     });
+};
+```
+
+### `parsePartialName` `Function(file) : String`
+
+By default, standalone partials will be named according to the shortest unique file path without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`. You may optionally provide your own name parser. This is helpful in cases where you may wish to exclude the directory names.
+
+```js
+parsePartialName: = function (file) {
+    // this.handlebars <- current handlebars instance
+    // file.path       <- full system path with extension
+    // file.shortPath  <- shortest unique path without extension
+    // file.exports    <- result of requiring the helper
+
+    // Ignore directory names
+    return path.basename(file.shortPath);
 };
 ```
 
