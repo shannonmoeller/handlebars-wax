@@ -121,7 +121,7 @@ module.exports.register = function (handlebars) {
 };
 ```
 
-### `parseHelperName` `Function(file) : String`
+### `parseHelperName` `{Function(Object):String}`
 
 By default, standalone helpers will be named according to the shortest unique file path without the extension. So a helper with a path of `string/upper.js` will be named `string-upper`. Note that path separators are replaced with hyphens to avoid having to use [square brackets](http://handlebarsjs.com/expressions.html#basic-blocks). You may optionally provide your own name parser. This is helpful in cases where you may wish to exclude the directory names.
 
@@ -188,7 +188,7 @@ module.exports.register = function (handlebars) {
 };
 ```
 
-### `parsePartialName` `Function(file) : String`
+### `parsePartialName` `{Function(Object):String}`
 
 By default, standalone partials will be named according to the shortest unique file path without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`. You may optionally provide your own name parser. This is helpful in cases where you may wish to exclude the directory names.
 
