@@ -39,6 +39,13 @@ console.log(handlbars.partials);
 
 #### Options
 
+- [`bustCache` `{Boolean}` (default: `false`)](#bustcache-boolean-default-false)
+- [`cwd` `{String}`](#cwd-string)
+- [`helpers` `{String|Array.<String>|Object|Function}`](#helpers-string%7Carraystring%7Cobject%7Cfunction)
+- [`parseHelperName` `{Function(Object):String}`](#parsehelpername-functionobjectstring)
+- [`partials` `{String|Array.<String>|Object|Function}`](#partials-string%7Carraystring%7Cobject%7Cfunction)
+- [`parsePartialName` `{Function(Object):String}`](#parsepartialname-functionobjectstring)
+
 ### `bustCache` `{Boolean}` (default: `false`)
 
 Whether to force a reload of helpers and partials by deleting them from the cache. Useful inside watch tasks.
@@ -114,7 +121,7 @@ module.exports.register = function (handlebars) {
 };
 ```
 
-### `parseHelperName` `Function(file) : String`
+### `parseHelperName` `{Function(Object):String}`
 
 By default, standalone helpers will be named according to the shortest unique file path without the extension. So a helper with a path of `string/upper.js` will be named `string-upper`. Note that path separators are replaced with hyphens to avoid having to use [square brackets](http://handlebarsjs.com/expressions.html#basic-blocks). You may optionally provide your own name parser. This is helpful in cases where you may wish to exclude the directory names.
 
@@ -181,7 +188,7 @@ module.exports.register = function (handlebars) {
 };
 ```
 
-### `parsePartialName` `Function(file) : String`
+### `parsePartialName` `{Function(Object):String}`
 
 By default, standalone partials will be named according to the shortest unique file path without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`. You may optionally provide your own name parser. This is helpful in cases where you may wish to exclude the directory names.
 
