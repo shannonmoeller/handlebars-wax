@@ -7,15 +7,17 @@ var handlebarsRegistrar = require('../index'),
 	path = require('path');
 
 describe('handlebars-registrar e2e', function () {
-	it('should use default options', function () {
-		var hb = handlebars.create();
+	var hb;
 
+	beforeEach(function () {
+		hb = handlebars.create();
+	});
+
+	it('should use default options', function () {
 		handlebarsRegistrar(hb);
 	});
 
 	it('should register simple helpers', function () {
-		var hb = handlebars.create();
-
 		handlebarsRegistrar(hb, {
 			helpers: path.join(__dirname, '/fixtures/helpers/function/**/*.js')
 		});
@@ -28,8 +30,6 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should register an object of helpers', function () {
-		var hb = handlebars.create();
-
 		handlebarsRegistrar(hb, {
 			helpers: path.join(__dirname, '/fixtures/helpers/object/*.js')
 		});
@@ -40,9 +40,30 @@ describe('handlebars-registrar e2e', function () {
 		expect(hb.helpers.when).toBeA(Function);
 	});
 
-	it('should defer registration of helpers', function () {
-		var hb = handlebars.create();
+	it('should register an object literal of helpers', function () {
+		handlebarsRegistrar(hb, {
+			helpers: {
+				lower: require('./fixtures/helpers/function/lower'),
+				upper: require('./fixtures/helpers/function/upper')
+			}
+		});
 
+		handlebarsRegistrar(hb, {
+			helpers: function () {
+				return {
+					lest: require('./fixtures/helpers/function/flow/lest'),
+					when: require('./fixtures/helpers/function/flow/when')
+				};
+			}
+		});
+
+		expect(hb.helpers.lower).toBeA(Function);
+		expect(hb.helpers.upper).toBeA(Function);
+		expect(hb.helpers.lest).toBeA(Function);
+		expect(hb.helpers.when).toBeA(Function);
+	});
+
+	it('should defer registration of helpers', function () {
 		handlebarsRegistrar(hb, {
 			helpers: path.join(__dirname, '/fixtures/helpers/deferred/*.js')
 		});
@@ -54,8 +75,6 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should register raw partials', function () {
-		var hb = handlebars.create();
-
 		handlebarsRegistrar(hb, {
 			partials: path.join(__dirname, '/fixtures/partials/raw/**/*.hbs')
 		});
@@ -67,8 +86,6 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should register an object of partials', function () {
-		var hb = handlebars.create();
-
 		handlebarsRegistrar(hb, {
 			partials: path.join(__dirname, '/fixtures/partials/object/*.js')
 		});
@@ -79,9 +96,24 @@ describe('handlebars-registrar e2e', function () {
 		expect(hb.partials.link).toBeA('string');
 	});
 
-	it('should defer registration of partials', function () {
-		var hb = handlebars.create();
+	it('should register an object literal of partials', function () {
+		handlebarsRegistrar(hb, {
+			partials: require('./fixtures/partials/object/layouts')
+		});
 
+		handlebarsRegistrar(hb, {
+			partials: function () {
+				return require('./fixtures/partials/object/components');
+			}
+		});
+
+		expect(hb.partials.layout).toBeA('string');
+		expect(hb.partials['layout-2col']).toBeA('string');
+		expect(hb.partials.item).toBeA('string');
+		expect(hb.partials.link).toBeA('string');
+	});
+
+	it('should defer registration of partials', function () {
 		handlebarsRegistrar(hb, {
 			partials: path.join(__dirname, '/fixtures/partials/deferred/*.js')
 		});
@@ -93,8 +125,6 @@ describe('handlebars-registrar e2e', function () {
 	});
 
 	it('should allow setting the cwd', function () {
-		var hb = handlebars.create();
-
 		handlebarsRegistrar(hb, {
 			cwd: __dirname,
 			helpers: 'fixtures/helpers/function/**/*.js',

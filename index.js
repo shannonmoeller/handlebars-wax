@@ -1,6 +1,7 @@
 'use strict';
 
-var requireGlob = require('require-glob'),
+var mixin = require('mtil/object/mixin'),
+	requireGlob = require('require-glob'),
 	pathSepPattern = /[ \/.-]+/g; // matches spaces, forward slashes, dots, and hyphens
 
 function parseHelperName(file) {
@@ -13,27 +14,32 @@ function parsePartialName(file) {
 	return file && file.shortPath;
 }
 
-function registerModule(method, obj, file) {
+function reducer(obj, file) {
 	var handlebars = this.handlebars,
 		content = file && file.exports;
 
 	if (!content) {
-		return;
+		return obj;
 	}
 
 	if (typeof content.register === 'function') {
 		content.register(handlebars);
-
-		return;
+		return obj;
 	}
 
-	if (typeof content === 'function') {
-		this.handlebars[method](this.keygen(file), content);
+	switch (typeof content) {
+		case 'function':
+			obj[this.keygen(file)] = content;
+			break;
 
-		return;
+		case 'object':
+			mixin(obj, content);
+			break;
+
+		// no default
 	}
 
-	handlebars[method](content);
+	return obj;
 }
 
 /**
@@ -67,9 +73,11 @@ function registrar(handlebars, options) {
 			|| parseHelperName;
 
 		options.reducer = options.helpersReducer
-			|| registerModule.bind(options, 'registerHelper');
+			|| reducer.bind(options);
 
-		requireGlob.sync(helpers, options);
+		helpers = requireGlob.sync(helpers, options);
+
+		handlebars.registerHelper(helpers);
 	}
 
 	// Register partials
@@ -78,9 +86,11 @@ function registrar(handlebars, options) {
 			|| parsePartialName;
 
 		options.reducer = options.partialsReducer
-			|| registerModule.bind(options, 'registerPartial');
+			|| reducer.bind(options);
 
-		requireGlob.sync(partials, options);
+		partials = requireGlob.sync(partials, options);
+
+		handlebars.registerPartial(partials);
 	}
 
 	return handlebars;
