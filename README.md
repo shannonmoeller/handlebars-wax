@@ -197,7 +197,7 @@ parsePartialName: = function (file) {
     // this.handlebars <- current handlebars instance
     // file.path       <- full system path with extension
     // file.shortPath  <- shortest unique path without extension
-    // file.exports    <- result of requiring the helper
+    // file.exports    <- result of requiring the partial
 
     // Ignore directory names
     return path.basename(file.shortPath);
