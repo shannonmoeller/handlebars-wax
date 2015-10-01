@@ -1,5 +1,4 @@
-/*eslint-env mocha */
-'use strict';
+/* eslint-env mocha */
 
 var handlebarsRegistrar = require('../index'),
 	handlebars = require('handlebars'),
@@ -26,6 +25,7 @@ describe('handlebars-registrar e2e', function () {
 		expect(hb.helpers.upper).toBeA(Function);
 		expect(hb.helpers['flow-lest']).toBeA(Function);
 		expect(hb.helpers['flow-when']).toBeA(Function);
+		expect(hb.helpers.bogus).toBe(undefined);
 		expect(hb.helpers.empty).toBe(undefined);
 	});
 

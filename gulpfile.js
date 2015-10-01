@@ -1,5 +1,3 @@
-'use strict';
-
 var gulp = require('gulp'),
 	paths = {
 		gulp: './gulpfile.js',
