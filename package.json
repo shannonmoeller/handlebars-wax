@@ -5,6 +5,8 @@
   "keywords": [
     "handlebars",
     "hbs",
+    "helpers",
+    "partials",
     "register",
     "registerHelpers",
     "registerPartials"
@@ -19,6 +21,7 @@
     "url": "https://github.com/shannonmoeller/handlebars-registrar.git"
   },
   "scripts": {
+    "gulp": "gulp",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "gulp test"
   },
@@ -27,13 +30,13 @@
     "require-glob": "^1.3.2"
   },
   "devDependencies": {
-    "coveralls": "^2.11.4",
-    "expect": "^1.11.1",
+    "coveralls": "^2.11.6",
+    "expect": "^1.14.0",
     "gulp": "^3.9.0",
-    "gulp-eslint": "^1.0.0",
-    "gulp-istanbul": "^0.10.1",
-    "gulp-mocha": "^2.1.3",
-    "handlebars": "^4.0.3"
+    "gulp-eslint": "^1.1.1",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
+    "handlebars": "^4.0.5"
   },
   "engines": {
     "node": ">= 0.10"
