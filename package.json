@@ -1,6 +1,6 @@
 {
   "name": "handlebars-glob",
-  "version": "2.0.1",
+  "version": "2.0.0",
   "description": "Effortless wiring of Handlebars helpers, partials, and decorators.",
   "main": "src/handlebars-glob.js",
   "scripts": {
