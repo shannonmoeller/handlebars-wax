@@ -1,145 +1,158 @@
-/* eslint-env mocha */
+import handlebars from 'handlebars';
+import path from 'path';
+import test from 'ava';
+import handlebarsGlob from '../src/handlebars-glob';
 
-var handlebarsRegistrar = require('../index'),
-	handlebars = require('handlebars'),
-	expect = require('expect'),
-	path = require('path');
+const cwd = path.dirname(__dirname);
 
-describe('handlebars-registrar e2e', function () {
-	var hb;
+test('should register nothing', async assert => {
+	const hb = handlebars.create();
 
-	beforeEach(function () {
-		hb = handlebars.create();
-	});
+	handlebarsGlob(hb)
+		.decorators()
+		.helpers()
+		.partials();
 
-	it('should use default options', function () {
-		handlebarsRegistrar(hb);
-	});
+	assert.is(hb.decorators.foo, undefined);
+	assert.is(hb.decorators.bar, undefined);
+	assert.is(hb.helpers.baz, undefined);
+	assert.is(hb.helpers.qux, undefined);
+	assert.is(hb.partials.boo, undefined);
+	assert.is(hb.partials.far, undefined);
 
-	it('should register simple helpers', function () {
-		handlebarsRegistrar(hb, {
-			helpers: path.join(__dirname, '/fixtures/helpers/function/**/*.js')
+	handlebarsGlob(hb)
+		.decorators('./fixtures/decorators/bogu*.js')
+		.helpers('./fixtures/helpers/bogu*.js')
+		.partials('./fixtures/partials/bogu*.js');
+
+	assert.is(hb.decorators.foo, undefined);
+	assert.is(hb.decorators.bar, undefined);
+	assert.is(hb.helpers.baz, undefined);
+	assert.is(hb.helpers.qux, undefined);
+	assert.is(hb.partials.boo, undefined);
+	assert.is(hb.partials.far, undefined);
+});
+
+test('should register objects', async assert => {
+	const hb = handlebars.create();
+
+	function foo() {}
+	function bar() {}
+	function baz() {}
+	function qux() {}
+	function boo() {}
+	function far() {}
+
+	handlebarsGlob(hb)
+		.decorators({
+			foo: foo,
+			bar: bar
+		})
+		.helpers({
+			baz: baz,
+			qux: qux
+		})
+		.partials({
+			boo: boo,
+			far: far
 		});
 
-		expect(hb.helpers.lower).toBeA(Function);
-		expect(hb.helpers.upper).toBeA(Function);
-		expect(hb.helpers['flow-lest']).toBeA(Function);
-		expect(hb.helpers['flow-when']).toBeA(Function);
-		expect(hb.helpers.bogus).toBe(undefined);
-		expect(hb.helpers.empty).toBe(undefined);
-	});
+	assert.is(hb.decorators.foo, foo);
+	assert.is(hb.decorators.bar, bar);
 
-	it('should register an object of helpers', function () {
-		handlebarsRegistrar(hb, {
-			helpers: path.join(__dirname, '/fixtures/helpers/object/*.js')
-		});
+	assert.is(hb.helpers.baz, baz);
+	assert.is(hb.helpers.qux, qux);
 
-		expect(hb.helpers.lower).toBeA(Function);
-		expect(hb.helpers.upper).toBeA(Function);
-		expect(hb.helpers.lest).toBeA(Function);
-		expect(hb.helpers.when).toBeA(Function);
-	});
+	assert.is(hb.partials.boo, boo);
+	assert.is(hb.partials.far, far);
+});
 
-	it('should register an object literal of helpers', function () {
-		handlebarsRegistrar(hb, {
-			helpers: {
-				lower: require('./fixtures/helpers/function/lower'),
-				upper: require('./fixtures/helpers/function/upper')
-			}
-		});
+test('should register objects by glob', async assert => {
+	const hb = handlebars.create();
 
-		handlebarsRegistrar(hb, {
-			helpers: function () {
-				return {
-					lest: require('./fixtures/helpers/function/flow/lest'),
-					when: require('./fixtures/helpers/function/flow/when')
-				};
-			}
-		});
+	handlebarsGlob(hb)
+		.decorators('./test/fixtures/decorators/object/**/*.js', {cwd})
+		.helpers('./fixtures/helpers/object/**/*.js')
+		.partials('./fixtures/partials/object/**/*.js');
 
-		expect(hb.helpers.lower).toBeA(Function);
-		expect(hb.helpers.upper).toBeA(Function);
-		expect(hb.helpers.lest).toBeA(Function);
-		expect(hb.helpers.when).toBeA(Function);
-	});
+	assert.is(typeof hb.decorators.currencyDecimal, 'function');
+	assert.is(typeof hb.decorators.currencyFormat, 'function');
+	assert.is(typeof hb.decorators.i18nLanguage, 'function');
+	assert.is(typeof hb.decorators.i18nCountry, 'function');
+	assert.is(hb.decorators.empty, undefined);
 
-	it('should defer registration of helpers', function () {
-		handlebarsRegistrar(hb, {
-			helpers: path.join(__dirname, '/fixtures/helpers/deferred/*.js')
-		});
+	assert.is(typeof hb.helpers.lower, 'function');
+	assert.is(typeof hb.helpers.upper, 'function');
+	assert.is(typeof hb.helpers.lest, 'function');
+	assert.is(typeof hb.helpers.when, 'function');
+	assert.is(hb.helpers.empty, undefined);
 
-		expect(hb.helpers.lower).toBeA(Function);
-		expect(hb.helpers.upper).toBeA(Function);
-		expect(hb.helpers.lest).toBeA(Function);
-		expect(hb.helpers.when).toBeA(Function);
-	});
+	assert.is(typeof hb.partials.item, 'string');
+	assert.is(typeof hb.partials.link, 'string');
+	assert.is(typeof hb.partials.layout, 'string');
+	assert.is(typeof hb.partials['layout-2col'], 'string');
+});
 
-	it('should register raw partials', function () {
-		handlebarsRegistrar(hb, {
-			partials: path.join(__dirname, '/fixtures/partials/raw/**/*.hbs')
-		});
+test('should register functions by glob', async assert => {
+	const hb = handlebars.create();
 
-		expect(hb.partials.layout).toBeA(Function);
-		expect(hb.partials['layout-2col']).toBeA(Function);
-		expect(hb.partials['components/item']).toBeA(Function);
-		expect(hb.partials['components/link']).toBeA(Function);
-	});
+	handlebarsGlob(hb)
+		.decorators('./fixtures/decorators/raw/**/*.js')
+		.helpers('./test/fixtures/helpers/raw/**/*.js', {cwd})
+		.partials('./fixtures/partials/raw/**/*.hbs');
 
-	it('should register an object of partials', function () {
-		handlebarsRegistrar(hb, {
-			partials: path.join(__dirname, '/fixtures/partials/object/*.js')
-		});
+	assert.is(typeof hb.decorators['currency-decimal'], 'function');
+	assert.is(typeof hb.decorators['currency-format'], 'function');
+	assert.is(typeof hb.decorators['i18n-language'], 'function');
+	assert.is(typeof hb.decorators['i18n-country'], 'function');
+	assert.is(hb.decorators.empty, undefined);
 
-		expect(hb.partials.layout).toBeA('string');
-		expect(hb.partials['layout-2col']).toBeA('string');
-		expect(hb.partials.item).toBeA('string');
-		expect(hb.partials.link).toBeA('string');
-	});
+	assert.is(typeof hb.helpers.lower, 'function');
+	assert.is(typeof hb.helpers.upper, 'function');
+	assert.is(typeof hb.helpers['flow-lest'], 'function');
+	assert.is(typeof hb.helpers['flow-when'], 'function');
+	assert.is(hb.helpers.empty, undefined);
 
-	it('should register an object literal of partials', function () {
-		handlebarsRegistrar(hb, {
-			partials: require('./fixtures/partials/object/layouts')
-		});
+	assert.is(typeof hb.partials['components/item'], 'function');
+	assert.is(typeof hb.partials['components/link'], 'function');
+	assert.is(typeof hb.partials.layout, 'function');
+	assert.is(typeof hb.partials['layout-2col'], 'function');
+});
 
-		handlebarsRegistrar(hb, {
-			partials: function () {
-				return require('./fixtures/partials/object/components');
-			}
-		});
+test('should defer registration by glob', async assert => {
+	const hb = handlebars.create();
 
-		expect(hb.partials.layout).toBeA('string');
-		expect(hb.partials['layout-2col']).toBeA('string');
-		expect(hb.partials.item).toBeA('string');
-		expect(hb.partials.link).toBeA('string');
-	});
+	handlebarsGlob(hb)
+		.decorators('./fixtures/decorators/deferred/**/*.js')
+		.helpers('./fixtures/helpers/deferred/**/*.js')
+		.partials('./test/fixtures/partials/deferred/**/*.js', {cwd});
 
-	it('should defer registration of partials', function () {
-		handlebarsRegistrar(hb, {
-			partials: path.join(__dirname, '/fixtures/partials/deferred/*.js')
-		});
+	assert.is(typeof hb.decorators.currencyDecimal, 'function');
+	assert.is(typeof hb.decorators.currencyFormat, 'function');
+	assert.is(typeof hb.decorators.i18nLanguage, 'function');
+	assert.is(typeof hb.decorators.i18nCountry, 'function');
+	assert.is(hb.decorators.empty, undefined);
 
-		expect(hb.partials.layout).toBeA('string');
-		expect(hb.partials['layout-2col']).toBeA('string');
-		expect(hb.partials.item).toBeA('string');
-		expect(hb.partials.link).toBeA('string');
-	});
+	assert.is(typeof hb.helpers.lower, 'function');
+	assert.is(typeof hb.helpers.upper, 'function');
+	assert.is(typeof hb.helpers.lest, 'function');
+	assert.is(typeof hb.helpers.when, 'function');
+	assert.is(hb.helpers.empty, undefined);
 
-	it('should allow setting the cwd', function () {
-		handlebarsRegistrar(hb, {
-			cwd: __dirname,
-			helpers: 'fixtures/helpers/function/**/*.js',
-			partials: 'fixtures/partials/raw/**/*.hbs'
-		});
+	assert.is(typeof hb.partials.item, 'string');
+	assert.is(typeof hb.partials.link, 'string');
+	assert.is(typeof hb.partials.layout, 'string');
+	assert.is(typeof hb.partials['layout-2col'], 'string');
+});
 
-		expect(hb.helpers.lower).toBeA(Function);
-		expect(hb.helpers.upper).toBeA(Function);
-		expect(hb.helpers['flow-lest']).toBeA(Function);
-		expect(hb.helpers['flow-when']).toBeA(Function);
-		expect(hb.helpers.empty).toBe(undefined);
+test.after('should not cause cross-contamination', async assert => {
+	const hb = handlebars.create();
 
-		expect(hb.partials.layout).toBeA(Function);
-		expect(hb.partials['layout-2col']).toBeA(Function);
-		expect(hb.partials['components/item']).toBeA(Function);
-		expect(hb.partials['components/link']).toBeA(Function);
-	});
+	assert.is(hb.decorators.currencyDecimal, undefined);
+	assert.is(hb.helpers.lower, undefined);
+	assert.is(hb.partials.layout, undefined);
+
+	assert.is(handlebars.decorators.currencyDecimal, undefined);
+	assert.is(handlebars.helpers.upper, undefined);
+	assert.is(handlebars.partials.layout, undefined);
 });
