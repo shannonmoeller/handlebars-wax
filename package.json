@@ -1,6 +1,6 @@
 {
   "name": "handlebars-registrar",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Effortless wiring of Handlebars helpers and partials.",
   "keywords": [
     "handlebars",
