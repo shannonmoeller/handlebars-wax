@@ -1,17 +1,20 @@
-# `handlebars-glob`
+# `handlebars-wax`
 
 [![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url] [![Tip][amazon-img]][amazon-url]
 
-Effortless registration of [Handlebars][handlebars] partials, helpers, and decorators.
+Effortless registration of [Handlebars][handlebars] data, partials, helpers, and decorators.
 
 ## Install
 
-    $ npm install --save handlebars-glob
+    $ npm install --save handlebars-wax
 
 ## Usage
 
 ```
 ┣━ index.js
+┣━ data/
+┃  ┣━ site.js
+┃  ┗━ locale.json
 ┣━ decorators/
 ┃  ┣━ currency.js
 ┃  ┗━ i18n.js
@@ -19,52 +22,105 @@ Effortless registration of [Handlebars][handlebars] partials, helpers, and decor
 ┃  ┣━ link.js
 ┃  ┗━ list.js
 ┗━ partials/
-   ┣━ footer.hbs
+   ┣━ footer.js
    ┗━ header.hbs
 ```
 
 ```js
 var handlebars = require('handlebars');
-var handlebarsGlob = require('handlebars-glob');
+var handlebarsWax = require('handlebars-wax');
 
-handlebarsGlob(handlebars)
-    .decorators('./decorators/**/*.js')
+var wax = handlebarsWax(handlebars)
+
+    // Partials
+    .partials('./partials/**/*.{hbs,js}')
+    .partials({
+        boo: '{{#each boo}}{{greet}}{{/each}}',
+        far: '{{#each far}}{{length}}{{/each}}'
+    })
+
+    // Helpers
+    .helpers('./node_modules/handlebars-layouts/index.js')
     .helpers('./helpers/**/*.js')
-    .partials('./partials/**/*.{hbs,js}');
+    .helpers({
+        foo: function () { ... },
+        bar: function () { ... }
+    })
 
-console.log(handlbars.decorators);
-// { currency: fn(), i18n: fn() }
+    // Decorators
+    .decorators('./decorators/**/*.js')
+    .decorators({
+        baz: function () { ... },
+        qux: function () { ... }
+    })
 
-console.log(handlbars.helpers);
-// { link: fn(), list: fn() }
+    // Data
+    .data('./data/**/*.{js,json}')
+    .data({
+        lorem: 'dolor',
+        ipsum: 'sit amet'
+    });
 
-console.log(handlbars.partials);
-// { footer: fn(), header: fn() }
+console.log(handlebars.partials);
+// { footer: fn(), header: fn(), boo: fn(), far: fn() }
+
+console.log(handlebars.helpers);
+// { link: fn(), list: fn(), foo: fn(), bar: fn(), extend: fn(), ... }
+
+console.log(handlebars.decorators);
+// { currency: fn(), i18n: fn(), baz: fn(), bat: fn() }
+
+console.log(wax.context);
+// { site: { ... }, locale: { ... }, lorem: 'dolor', ipsum: 'sit amet' }
+
+var template = wax.compile('{{lorem}} {{ipsum}}');
+
+console.log(template({ ipsum: 'consectetur' }));
+// "dolor consectetur"
 ```
 
-### Registering Files
+## Registering Partials, Helpers, and Decorators
 
-You may use `handlebars-glob` to require and register any partials file or any module that exports a function, an object, or a `register` factory.
+You may use `handlebars-wax` to require and register any modules that export a `register` factory, an object, or a function as partials, helpers, and decorators.
 
-#### Exporting a Function
+### Exporting a Factory
 
-Files may export a default function, or Handlebars' `require.extensions` hook may be used to load an `.hbs` file which returns a function.
+In cases where a direct reference to the instance of Handlebars in use is needed, modules may export a `register` factory function. For example, the following module will define a new helper called `foo-bar`:
+
+```js
+module.exports.register = function (handlebars) {
+    handlebars.registerHelper('foo-bar', function (text, url) {
+        var result = '<a href="' + url + '">' + text + '</a>';
+
+        return new handlebars.SafeString(result);
+    });
+};
+```
+
+### Exporting an Object
+
+If a module exports an object, that object is registered with Handlebars directly where the object keys are used as names. For example, the following module exports an object that will cause `baz` and `qux` to be registered:
+
+```js
+module.exports = {
+    baz: function () {
+        // do something
+    },
+    qux: function () {
+        // do something
+    }
+};
+```
+
+### Exporting a Function
+
+If a module exports a function, that function is registered based on the globbed portion of a path, ignoring extensions. Handlebars' `require.extensions` hook may be used to load `.handlebars` or `.hbs` files.
 
 ```js
 module.exports = function () {
     // do something
 };
 ```
-
-or
-
-```js
-export default function () {
-    // do something
-}
-```
-
-The function will be registered based on the globbed portion of a given path.
 
 ```
 ┣━ index.js
@@ -78,37 +134,37 @@ The function will be registered based on the globbed portion of a given path.
 ```
 
 ```js
-hbglob
+handlebarsWax(handlebars)
     .partials('./partials/**/*.{hbs,js}');
-// registers the partials:
-// - `components/link`
-// - `components/list`
-// - `layouts/one-column`
-// - `layouts/two-column`
+    // registers the partials:
+    // - `components/link`
+    // - `components/list`
+    // - `layouts/one-column`
+    // - `layouts/two-column`
 
-hbglob
+handlebarsWax(handlebars)
     .partials('./partials/components/*.js')
     .partials('./partials/layouts/*.hbs');
-// registers the partials:
-// - `link`
-// - `list`
-// - `one-column`
-// - `two-column`
+    // registers the partials:
+    // - `link`
+    // - `list`
+    // - `one-column`
+    // - `two-column`
 
-hbglob
+handlebarsWax(handlebars)
     .partials([
         './partials/**/*.{hbs,js}',
         '!./partials/layouts/**'
     ])
     .partials('./partials/layouts/*.hbs');
-// registers the partials:
-// - `components/link`
-// - `components/list`
-// - `one-column`
-// - `two-column`
+    // registers the partials:
+    // - `components/link`
+    // - `components/list`
+    // - `one-column`
+    // - `two-column`
 ```
 
-Helpers and decorators are handled similarly, but path separators and non-word characters are replaced with hyphens to avoid having to use the [segment-literal notation][square] inside templates.
+Helpers and decorators are handled similarly to partials, but path separators and non-word characters are replaced with hyphens to avoid having to use [segment-literal notation][square] inside templates.
 
 ```
 ┣━ index.js
@@ -122,181 +178,206 @@ Helpers and decorators are handled similarly, but path separators and non-word c
 ```
 
 ```js
-hbglob
+handlebarsWax(handlebars)
     .helpers('./helpers/**/*.js');
-// registers the helpers:
-// - `format-date`
-// - `format-number-round`
-// - `list-group-by`
-// - `list-order-by`
+    // registers the helpers:
+    // - `format-date`
+    // - `format-number-round`
+    // - `list-group-by`
+    // - `list-order-by`
 ```
 
-#### Exporting an Object
+You may customize how names are generated by using the `base` option, or by specifying a custom `parsePartialName`, `parseHelperName`, or `parseDecoratorName` function.
 
-If a file exports an object, that object is registered with Handlebars directly where the object keys are used as names. For example, the following file exports an object that will cause `baz` and `qux` to be registered, regardless of the file path:
-
-```js
-module.exports = {
-    baz: function () {
-        // do something
-    },
-    qux: function () {
-        // do something
-    }
-};
-```
-
-or
 
 ```js
-export function baz() {
-    // do something
-}
-
-export function qux() {
-    // do something
-}
-```
-
-#### Exporting a Factory
-
-In cases where a direct reference to the instance of Handlebars in use is needed, files may export a `register` function. For example, the following file will define a new helper called `foo-bar`, regardless of the file path.
-
-```js
-module.exports.register = function (handlebars) {
-    handlebars.registerHelper('foo-bar', function (text, url) {
-        var result = '<a href="' + url + '">' + text + '</a>';
-
-        return new handlebars.SafeString(result);
-    });
-};
-```
-
-or
-
-```js
-export function register(handlebars) {
-    handlebars.registerHelper('foo-bar', function (text, url) {
-        var result = '<a href="' + url + '">' + text + '</a>';
-
-        return new handlebars.SafeString(result);
-    });
-}
-```
-
-### Registering Objects
-
-As a convenience, objects may also be used to register partials, helpers, and decorators exactly like the native `registerPartial`, `registerHelper`, and `registerDecorator` methods. This makes it easy to do all of your registration in one go.
-
-```js
-handlebarsGlob(hb)
-    // Decorators
-    .decorators('./decorators/**/*.js')
-    .decorators({
-        foo: function () { ... },
-        bar: function () { ... }
+handlebarsWax(handlebars)
+    .partials('./partials/components/*.js', {
+        base: __dirname
     })
-
-    // Helpers
-    .helpers('./node_modules/handlebars-layouts/index.js')
-    .helpers('./helpers/**/*.js')
-    .helpers({
-        baz: function () { ... },
-        qux: function () { ... }
-    })
-
-    // Partials
-    .partials('./partials/**/*.js')
-    .partials({
-        boo: '{{#each boo}}{{greet}}{{/each}}',
-        far: '{{#each far}}{{length}}{{/each}}'
+    .partials('./partials/layouts/*.hbs', {
+        base: path.join(__dirname, 'partials/layouts')
     });
+    // registers the partials:
+    // - `partials/components/link`
+    // - `partials/components/list`
+    // - `one-column`
+    // - `two-column`
+
+handlebarsWax(handlebars)
+    .helpers('./helpers/**/*.{hbs,js}', {
+        // Expect these helpers to export their own name.
+        parseHelperName: function(options, file) {
+            // options.handlebars
+            // file.cwd
+            // file.base
+            // file.path
+            // file.exports
+
+            return file.exports.name;
+        }
+    });
+    // registers the helpers:
+    // - `date`
+    // - `round`
+    // - `groupBy`
+    // - `orderBy`
 ```
+
+## Registering Data
+
+When data is registered, the resulting object structure is determined according to the default rules of [`require-glob`][reqglob].
+
+```
+┣━ index.js
+┗━ data/
+   ┣━ foo/
+   ┃  ┣━ hello.js
+   ┃  ┗━ world.json
+   ┗━ bar/
+      ┣━ bye.js
+      ┗━ moon.json
+```
+
+```js
+handlebarsWax(handlebars)
+    .data('./data/**/*.{js,json}');
+    // registers the data:
+    // {
+    //     foo: {
+    //         hello: require('./data/foo/hello.js'),
+    //         world: require('./data/foo/world.json')
+    //     },
+    //     bar: {
+    //         hello: require('./data/bar/bye.js'),
+    //         world: require('./data/bar/moon.json')
+    //     }
+    // }
+```
+
+You may customize how data is structured by using the `base` option, or by specifying a custom `parseDataName`.
+
+```js
+handlebarsWax(handlebars)
+    .data('./data/**/*.{js,json}', {
+        base: __dirname,
+        parseDataName: function(options, file) {
+            // options.handlebars
+            // file.cwd
+            // file.base
+            // file.path
+            // file.exports
+
+            return file.path
+                .replace(file.base, '')
+                .split(/[\/\.]/)
+                .filter(Boolean)
+                .reverse()
+                .join('_')
+                .toUpperCase();
+        }
+    });
+    // registers the data:
+    // {
+    //     JS_HELLO_FOO_DATA: require('./data/foo/hello.js'),
+    //     JSON_WORLD_FOO_DATA: require('./data/foo/world.json'),
+    //     JS_BYE_BAR_DATA: require('./data/bar/bye.js'),
+    //     JSON_MOON_BAR_DATA: require('./data/bar/moon.json')
+    // }
+```
+
+## Compiling and Rendering
+
+Data is exposed to templates that are compiled by `handlebars-wax` as a [parent frame][frame] of data passed to the template function. You may compile strings, or recompile template functions.
+
+```js
+var compiledTemplate = handlebars.compile('{{foo}} {{bar}}');
+var waxedTemplate = wax.compile(compiledTemplate);
+// or: var waxedTemplate = wax.compile('{{foo}} {{bar}}');
+
+wax.data({ foo: 'hello', bar: 'world' });
+
+console.log(compiledTemplate());
+// " "
+
+console.log(waxedTemplate());
+// "hello world"
+
+console.log(waxedTemplate({ bar: 'moon' }));
+// "hello moon"
+```
+
 
 ## API
 
-### handlebarsGlob(handlebars): HandlebarsGlob
+### handlebarsWax(handlebars [, options]): HandlebarsWax
 
-#### handlebars
+- `handlebars` `{Handlebars}` An instance of Handlebars to wax.
+- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `cwd` `{String}` (optional: defaults to `__dirname`)
+  - `parsePartialName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
+  - `parseHelperName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
+  - `parseDecoratorName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
+  - `parseDataName` `{Function(options, file): String}` (optional) See section on [registering data](#exporting-data).
 
-Type: `{Handlebars}`
+Provides a waxed API to augment an instance of Handlebars.
 
-The instance of Handlebars to receive partials, helpers, and decorators.
+### .handlebars
 
-### .decorators(pattern [, options]): HandlebarsGlob
+The instance of Handlebars in use.
 
-Requires and registers [decorators][decorators] en-masse from the file-system.
+### .context
 
-#### pattern
+An object containing all [registered data](#data-pattern-options-handlebarswax).
 
-Type: `{String|Array.<String>|Object}`
+### .partials(pattern [, options]): HandlebarsWax
 
-One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parsePartialName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
 
-#### options
+Requires and registers [partials][partials] en-masse from the file-system or an object. May be called more than once. If names collide, newest wins.
 
-Type: `{Object}` (optional)
+### .helpers(pattern [, options]): HandlebarsWax
 
-This object is passed directly to [`require-glob`][reqglob] and ultimately to [`node-glob`][glob] so check there for more options.
+- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parseHelperName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
 
-##### parseDecoratorName
+Requires and registers [helpers][helpers] en-masse from the file-system or an object. May be called more than once. If names collide, newest wins.
 
-Type: `{Function(options, fileObj): String|Array.<String>}`
+### .decorators(pattern [, options]): HandlebarsWax
 
-A custom [`keygen`][keygen] function used to generate a unique name for a decorator based on the decorator's file path. By default, decorators will be named according to the globbed portion of the file path without the extension, where non-word characters are replaced with hyphens.
+- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parseDecoratorName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
 
-### .helpers(pattern [, options]): HandlebarsGlob
+Requires and registers [decorators][decorators] en-masse from the file-system or an object. May be called more than once. If names collide, newest wins.
 
-Requires and registers [helpers][helpers] en-masse from the file-system.
+### .data(pattern [, options]): HandlebarsWax
 
-#### pattern
+- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parseDataName` `{Function(options, file): String}` (optional) See section on [registering data](#registering-data).
 
-Type: `{String|Array.<String>|Object}`
+Requires and registers data en-masse from the file-system or an object into the current context. May be called more than once. Results are shallow-merged into a single object. If keys collide, newest wins. See [Compiling and Rendering](#compiling-and-rendering).
 
-One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+### .compile(template [, options]): Function(Object)
 
-#### options
+- `template` `{String|Function(Object)}`
+- `options` `{Object}` See the [`Handlebars.compile` documentation][compile].
 
-Type: `{Object}` (optional)
+Compiles a template that can be executed immediately to produce a final result. Data provided to the template function will be a [child frame][frame] of the current [context](#context). See [Compiling and Rendering](#compiling-and-rendering).
 
-This object is passed directly to [`require-glob`][reqglob] and ultimately to [`node-glob`][glob] so check there for more options.
-
-##### parseHelperName
-
-Type: `{Function(options, fileObj): String|Array.<String>}`
-
-A custom [`keygen`][keygen] function used to generate a unique name for a helper based on the helper's file path. By default, helpers will be named according to the globbed portion of the file path without the extension, where non-word characters are replaced with hyphens.
-
-### .partials(pattern [, options]): HandlebarsGlob
-
-Requires and registers [partials][partials] en-masse from the file-system.
-
-#### pattern
-
-Type: `{String|Array.<String>|Object}`
-
-One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
-
-#### options
-
-Type: `{Object}` (optional)
-
-This object is passed directly to [`require-glob`][reqglob] and ultimately to [`node-glob`][glob] so check there for more options.
-
-##### parsePartialName
-
-Type: `{Function(options, fileObj): String|Array.<String>}`
-
-A custom [`keygen`][keygen] function used to generate a unique name for a partial based on the partial's file path. By default, partials will be named according to the shortest unique file path without the extension. So a partial with a path of `component/link.hbs` will be named `component/link`.
-
+[compile]: http://handlebarsjs.com/reference.html#base-compile
+[decorators]: https://github.com/wycats/handlebars.js/blob/master/docs/decorators-api.md
+[frame]: http://handlebarsjs.com/reference.html#base-createFrame
+[glob]: https://github.com/isaacs/node-glob#usage
 [handlebars]: https://github.com/wycats/handlebars.js#usage
 [helpers]: http://handlebarsjs.com/#helpers
-[partials]: http://handlebarsjs.com/#partials
-[decorators]: https://github.com/wycats/handlebars.js/blob/master/docs/decorators-api.md
-
-[glob]: https://github.com/isaacs/node-glob#usage
 [keygen]: https://github.com/shannonmoeller/require-glob#keygen
 [minimatch]: https://github.com/isaacs/minimatch#usage
+[partials]: http://handlebarsjs.com/#partials
 [reqglob]: https://github.com/shannonmoeller/require-glob#usage
 [square]: http://handlebarsjs.com/expressions.html#basic-blocks
 
@@ -316,12 +397,12 @@ Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 
 [amazon-img]:    https://img.shields.io/badge/amazon-tip_jar-yellow.svg?style=flat-square
 [amazon-url]:    https://www.amazon.com/gp/registry/wishlist/1VQM9ID04YPC5?sort=universal-price
-[coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/handlebars-glob/master.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/r/shannonmoeller/handlebars-glob
-[downloads-img]: http://img.shields.io/npm/dm/handlebars-glob.svg?style=flat-square
+[coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/handlebars-wax/master.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/shannonmoeller/handlebars-wax
+[downloads-img]: http://img.shields.io/npm/dm/handlebars-wax.svg?style=flat-square
 [gitter-img]:    http://img.shields.io/badge/gitter-join_chat-1dce73.svg?style=flat-square
 [gitter-url]:    https://gitter.im/shannonmoeller/shannonmoeller
-[npm-img]:       http://img.shields.io/npm/v/handlebars-glob.svg?style=flat-square
-[npm-url]:       https://npmjs.org/package/handlebars-glob
-[travis-img]:    http://img.shields.io/travis/shannonmoeller/handlebars-glob.svg?style=flat-square
-[travis-url]:    https://travis-ci.org/shannonmoeller/handlebars-glob
+[npm-img]:       http://img.shields.io/npm/v/handlebars-wax.svg?style=flat-square
+[npm-url]:       https://npmjs.org/package/handlebars-wax
+[travis-img]:    http://img.shields.io/travis/shannonmoeller/handlebars-wax.svg?style=flat-square
+[travis-url]:    https://travis-ci.org/shannonmoeller/handlebars-wax
