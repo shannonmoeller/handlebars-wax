@@ -254,6 +254,33 @@ test('should pre-fill template-function data', async assert => {
 	assert.is(waxedTemplate({baz: 'c'}), 'hello world c');
 });
 
+test('should set registered data as _parent', async assert => {
+	const {wax} = setup();
+	const waxedTemplate = wax.compile('{{_parent.foo}} {{foo}}');
+
+	wax.data({foo: 'hello'});
+
+	assert.is(waxedTemplate({foo: 'world'}), 'hello world');
+});
+
+test('should set registered data as @root', async assert => {
+	const {wax} = setup();
+	const waxedTemplate = wax.compile('{{@root.foo}} {{foo}}');
+
+	wax.data({foo: 'hello'});
+
+	assert.is(waxedTemplate({foo: 'world'}), 'hello world');
+});
+
+test('should prefer user-specified @root', async assert => {
+	const {wax} = setup();
+	const waxedTemplate = wax.compile('{{foo}} {{_parent.foo}} {{@root.foo}} {{@root._parent.foo}}');
+
+	wax.data({foo: 'hello'});
+
+	assert.is(waxedTemplate({foo: 'world'}, {data: {root: {foo: 'bye'}}}), 'world hello bye hello');
+});
+
 // Housekeeping
 
 test.after('should not cause cross-contamination', async assert => {

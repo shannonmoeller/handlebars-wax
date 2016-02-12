@@ -286,9 +286,9 @@ handlebarsWax(handlebars)
     // }
 ```
 
-## Compiling and Rendering
+## Context and Rendering
 
-Data is exposed to templates that are compiled by `handlebars-wax` as a [parent frame][frame] of data passed to the template function. You may compile strings, or recompile template functions.
+Data is exposed to templates that are compiled by `handlebars-wax` as the [`@root`][root] context and as a [parent frame][frame] of data passed to the template function. You may compile strings, or recompile template functions.
 
 ```js
 var compiledTemplate = handlebars.compile('{{foo}} {{bar}}');
@@ -305,8 +305,12 @@ console.log(waxedTemplate());
 
 console.log(waxedTemplate({ bar: 'moon' }));
 // "hello moon"
-```
 
+var accessTemplate = wax.compile('{{bar}} {{_parent.bar}} {{@root.bar}} {{@root._parent.bar}}');
+
+console.log(accessTemplate({ bar: 'moon' }, { data: { root: { bar: 'sun'} } }));
+// "moon world sun world"
+```
 
 ## API
 
@@ -314,7 +318,8 @@ console.log(waxedTemplate({ bar: 'moon' }));
 
 - `handlebars` `{Handlebars}` An instance of Handlebars to wax.
 - `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
-  - `cwd` `{String}` (optional: defaults to `__dirname`)
+  - `cwd` `{String}` (default: `__dirname`)
+  - `compileOptions` `{Object}` (optional) Default options to use when compiling templates.
   - `parsePartialName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
   - `parseHelperName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
   - `parseDecoratorName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
@@ -360,14 +365,14 @@ Requires and registers [decorators][decorators] en-masse from the file-system or
 - `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
   - `parseDataName` `{Function(options, file): String}` (optional) See section on [registering data](#registering-data).
 
-Requires and registers data en-masse from the file-system or an object into the current context. May be called more than once. Results are shallow-merged into a single object. If keys collide, newest wins. See [Compiling and Rendering](#compiling-and-rendering).
+Requires and registers data en-masse from the file-system or an object into the current context. May be called more than once. Results are shallow-merged into a single object. If keys collide, newest wins. See [Context and Rendering](#context-and-rendering).
 
 ### .compile(template [, options]): Function(Object)
 
 - `template` `{String|Function(Object)}`
 - `options` `{Object}` See the [`Handlebars.compile` documentation][compile].
 
-Compiles a template that can be executed immediately to produce a final result. Data provided to the template function will be a [child frame][frame] of the current [context](#context). See [Compiling and Rendering](#compiling-and-rendering).
+Compiles a template that can be executed immediately to produce a final result. Data provided to the template function will be a [child frame][frame] of the current [context](#context). See [Context and Rendering](#context-and-rendering).
 
 [compile]: http://handlebarsjs.com/reference.html#base-compile
 [decorators]: https://github.com/wycats/handlebars.js/blob/master/docs/decorators-api.md
@@ -379,6 +384,7 @@ Compiles a template that can be executed immediately to produce a final result. 
 [minimatch]: https://github.com/isaacs/minimatch#usage
 [partials]: http://handlebarsjs.com/#partials
 [reqglob]: https://github.com/shannonmoeller/require-glob#usage
+[root]: http://handlebarsjs.com/reference.html#data-root
 [square]: http://handlebarsjs.com/expressions.html#basic-blocks
 
 ## Contribute

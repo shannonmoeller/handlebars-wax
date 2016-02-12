@@ -83,6 +83,7 @@ function HandlebarsWax(handlebars, options) {
 	var defaults = {
 		handlebars: handlebars,
 		cwd: getParentDir(),
+		compileOptions: null,
 		parsePartialName: keygenPartial,
 		parseHelperName: keygenHelper,
 		parseDecoratorName: keygenDecorator,
@@ -99,7 +100,7 @@ HandlebarsWax.prototype.partials = function (partials, options) {
 	options.keygen = options.parsePartialName;
 	options.reducer = options.reducer || reducer;
 
-	this.handlebars.registerPartial(
+	options.handlebars.registerPartial(
 		resolveValue(options, partials)
 	);
 
@@ -111,7 +112,7 @@ HandlebarsWax.prototype.helpers = function (helpers, options) {
 	options.keygen = options.parseHelperName;
 	options.reducer = options.reducer || reducer;
 
-	this.handlebars.registerHelper(
+	options.handlebars.registerHelper(
 		resolveValue(options, helpers)
 	);
 
@@ -123,7 +124,7 @@ HandlebarsWax.prototype.decorators = function (decorators, options) {
 	options.keygen = options.parseDecoratorName;
 	options.reducer = options.reducer || reducer;
 
-	this.handlebars.registerDecorator(
+	options.handlebars.registerDecorator(
 		resolveValue(options, decorators)
 	);
 
@@ -142,17 +143,22 @@ HandlebarsWax.prototype.data = function (data, options) {
 HandlebarsWax.prototype.compile = function (template, options) {
 	options = assign({}, this.config, options);
 
-	var handlebars = options.handlebars;
 	var context = this.context;
+	var compileOptions = options.compileOptions || {};
 
 	if (getTypeOf(template) !== TYPE_FUNCTION) {
-		template = handlebars.compile(template, options);
+		template = options.handlebars.compile(template, compileOptions);
 	}
 
-	return function (data) {
-		var frame = handlebars.createFrame(context);
+	return function (data, templateOptions) {
+		templateOptions = assign({}, templateOptions);
+		templateOptions.data = assign({}, templateOptions.data);
 
-		return template(assign(frame, data));
+		// {{@root.foo}} and {{@root._parent.foo}}
+		templateOptions.data.root = assign({_parent: context}, templateOptions.data.root || context);
+
+		// {{foo}} and {{_parent.foo}}
+		return template(assign({_parent: context}, context, data), templateOptions);
 	};
 };
 
