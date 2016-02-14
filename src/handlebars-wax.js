@@ -84,6 +84,7 @@ function HandlebarsWax(handlebars, options) {
 		handlebars: handlebars,
 		cwd: getParentDir(),
 		compileOptions: null,
+		templateOptions: null,
 		parsePartialName: keygenPartial,
 		parseHelperName: keygenHelper,
 		parseDecoratorName: keygenDecorator,
@@ -140,18 +141,18 @@ HandlebarsWax.prototype.data = function (data, options) {
 	return this;
 };
 
-HandlebarsWax.prototype.compile = function (template, options) {
-	options = assign({}, this.config, options);
-
+HandlebarsWax.prototype.compile = function (template, compileOptions) {
+	var config = this.config;
 	var context = this.context;
-	var compileOptions = options.compileOptions || {};
+
+	compileOptions = assign({}, config.compileOptions, compileOptions);
 
 	if (getTypeOf(template) !== TYPE_FUNCTION) {
-		template = options.handlebars.compile(template, compileOptions);
+		template = this.handlebars.compile(template, compileOptions);
 	}
 
 	return function (data, templateOptions) {
-		templateOptions = assign({}, templateOptions);
+		templateOptions = assign({}, config.templateOptions, templateOptions);
 		templateOptions.data = assign({}, templateOptions.data);
 
 		// {{@root.foo}} and {{@root._parent.foo}}

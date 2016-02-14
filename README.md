@@ -319,11 +319,12 @@ console.log(accessTemplate({ bar: 'moon' }, { data: { root: { bar: 'sun'} } }));
 - `handlebars` `{Handlebars}` An instance of Handlebars to wax.
 - `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
   - `cwd` `{String}` (default: `__dirname`)
-  - `compileOptions` `{Object}` (optional) Default options to use when compiling templates.
-  - `parsePartialName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
-  - `parseHelperName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
-  - `parseDecoratorName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
-  - `parseDataName` `{Function(options, file): String}` (optional) See section on [registering data](#exporting-data).
+  - `compileOptions` `{Object}` Default options to use when compiling templates.
+  - `templateOptions` `{Object}` Default options to use when rendering templates.
+  - `parsePartialName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
+  - `parseHelperName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
+  - `parseDecoratorName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
+  - `parseDataName` `{Function(options, file): String}` See section on [registering data](#exporting-data).
 
 Provides a waxed API to augment an instance of Handlebars.
 
@@ -338,32 +339,32 @@ An object containing all [registered data](#data-pattern-options-handlebarswax).
 ### .partials(pattern [, options]): HandlebarsWax
 
 - `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
-- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
-  - `parsePartialName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
+- `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parsePartialName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
 
 Requires and registers [partials][partials] en-masse from the file-system or an object. May be called more than once. If names collide, newest wins.
 
 ### .helpers(pattern [, options]): HandlebarsWax
 
 - `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
-- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
-  - `parseHelperName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
+- `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parseHelperName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
 
 Requires and registers [helpers][helpers] en-masse from the file-system or an object. May be called more than once. If names collide, newest wins.
 
 ### .decorators(pattern [, options]): HandlebarsWax
 
 - `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
-- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
-  - `parseDecoratorName` `{Function(options, file): String}` (optional) See section on [registering a function](#exporting-a-function).
+- `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parseDecoratorName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
 
 Requires and registers [decorators][decorators] en-masse from the file-system or an object. May be called more than once. If names collide, newest wins.
 
 ### .data(pattern [, options]): HandlebarsWax
 
 - `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
-- `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
-  - `parseDataName` `{Function(options, file): String}` (optional) See section on [registering data](#registering-data).
+- `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `parseDataName` `{Function(options, file): String}` See section on [registering data](#registering-data).
 
 Requires and registers data en-masse from the file-system or an object into the current context. May be called more than once. Results are shallow-merged into a single object. If keys collide, newest wins. See [Context and Rendering](#context-and-rendering).
 
