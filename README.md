@@ -288,7 +288,7 @@ handlebarsWax(handlebars)
 
 ## Context and Rendering
 
-Data is exposed to templates that are compiled by `handlebars-wax` as the [`@root`][root] context and as a [parent frame][frame] of data passed to the template function. You may compile strings, or recompile template functions.
+Registered data is exposed to templates that are compiled by `handlebars-wax` as the [`@root`][root] context and as a [parent frame][frame] of data passed to the template function. You may compile strings, or recompile template functions.
 
 ```js
 var compiledTemplate = handlebars.compile('{{foo}} {{bar}}');
