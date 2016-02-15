@@ -31,6 +31,38 @@ test('should not modify partials', async assert => {
 	assert.same(Object.keys(hb.partials), defaultPartials);
 });
 
+test('should register partials by factory', async assert => {
+	const {hb, wax} = setup();
+
+	function foo() {}
+	function bar() {}
+
+	wax.partials({
+		register: function (handlebars) {
+			assert.is(handlebars, hb);
+			handlebars.registerPartial({foo, bar});
+		}
+	});
+
+	assert.is(hb.partials.foo, foo);
+	assert.is(hb.partials.bar, bar);
+});
+
+test('should register partials by function', async assert => {
+	const {hb, wax} = setup();
+
+	function foo() {}
+	function bar() {}
+
+	wax.partials(function (handlebars) {
+		assert.is(handlebars, hb);
+		handlebars.registerPartial({foo, bar});
+	});
+
+	assert.is(hb.partials.foo, foo);
+	assert.is(hb.partials.bar, bar);
+});
+
 test('should register partials by object', async assert => {
 	const {hb, wax} = setup();
 
@@ -41,6 +73,17 @@ test('should register partials by object', async assert => {
 
 	assert.is(hb.partials.foo, foo);
 	assert.is(hb.partials.bar, bar);
+});
+
+test('should register partials by globbed factory', async assert => {
+	const {hb, wax} = setup();
+
+	wax.partials('./fixtures/partials/factory/**/*.js');
+
+	assert.is(typeof hb.partials.item, 'string');
+	assert.is(typeof hb.partials.link, 'string');
+	assert.is(typeof hb.partials.layout, 'string');
+	assert.is(typeof hb.partials['layout-2col'], 'string');
 });
 
 test('should register partials by globbed function', async assert => {
@@ -58,17 +101,6 @@ test('should register partials by globbed object', async assert => {
 	const {hb, wax} = setup();
 
 	wax.partials('./fixtures/partials/object/**/*.js');
-
-	assert.is(typeof hb.partials.item, 'string');
-	assert.is(typeof hb.partials.link, 'string');
-	assert.is(typeof hb.partials.layout, 'string');
-	assert.is(typeof hb.partials['layout-2col'], 'string');
-});
-
-test('should register partials by globbed factory', async assert => {
-	const {hb, wax} = setup();
-
-	wax.partials('./fixtures/partials/factory/**/*.js');
 
 	assert.is(typeof hb.partials.item, 'string');
 	assert.is(typeof hb.partials.link, 'string');
@@ -98,6 +130,18 @@ test('should register helpers by object', async assert => {
 	assert.is(hb.helpers.bar, bar);
 });
 
+test('should register helpers by globbed factory', async assert => {
+	const {hb, wax} = setup();
+
+	wax.helpers('./fixtures/helpers/factory/**/*.js');
+
+	assert.is(typeof hb.helpers.lower, 'function');
+	assert.is(typeof hb.helpers.upper, 'function');
+	assert.is(typeof hb.helpers.lest, 'function');
+	assert.is(typeof hb.helpers.when, 'function');
+	assert.is(hb.helpers.empty, undefined);
+});
+
 test('should register helpers by globbed function', async assert => {
 	const {hb, wax} = setup();
 
@@ -114,18 +158,6 @@ test('should register helpers by globbed object', async assert => {
 	const {hb, wax} = setup();
 
 	wax.helpers('./fixtures/helpers/object/**/*.js');
-
-	assert.is(typeof hb.helpers.lower, 'function');
-	assert.is(typeof hb.helpers.upper, 'function');
-	assert.is(typeof hb.helpers.lest, 'function');
-	assert.is(typeof hb.helpers.when, 'function');
-	assert.is(hb.helpers.empty, undefined);
-});
-
-test('should register helpers by globbed factory', async assert => {
-	const {hb, wax} = setup();
-
-	wax.helpers('./fixtures/helpers/factory/**/*.js');
 
 	assert.is(typeof hb.helpers.lower, 'function');
 	assert.is(typeof hb.helpers.upper, 'function');
@@ -156,6 +188,18 @@ test('should register decorators by object', async assert => {
 	assert.is(hb.decorators.bar, bar);
 });
 
+test('should register decorators by globbed factory', async assert => {
+	const {hb, wax} = setup();
+
+	wax.decorators('./fixtures/decorators/factory/**/*.js');
+
+	assert.is(typeof hb.decorators.currencyDecimal, 'function');
+	assert.is(typeof hb.decorators.currencyFormat, 'function');
+	assert.is(typeof hb.decorators.i18nLanguage, 'function');
+	assert.is(typeof hb.decorators.i18nCountry, 'function');
+	assert.is(hb.decorators.empty, undefined);
+});
+
 test('should register decorators by globbed function', async assert => {
 	const {hb, wax} = setup();
 
@@ -172,18 +216,6 @@ test('should register decorators by globbed object', async assert => {
 	const {hb, wax} = setup();
 
 	wax.decorators('./fixtures/decorators/object/**/*.js');
-
-	assert.is(typeof hb.decorators.currencyDecimal, 'function');
-	assert.is(typeof hb.decorators.currencyFormat, 'function');
-	assert.is(typeof hb.decorators.i18nLanguage, 'function');
-	assert.is(typeof hb.decorators.i18nCountry, 'function');
-	assert.is(hb.decorators.empty, undefined);
-});
-
-test('should register decorators by globbed factory', async assert => {
-	const {hb, wax} = setup();
-
-	wax.decorators('./fixtures/decorators/factory/**/*.js');
 
 	assert.is(typeof hb.decorators.currencyDecimal, 'function');
 	assert.is(typeof hb.decorators.currencyFormat, 'function');

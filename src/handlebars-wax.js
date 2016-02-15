@@ -70,8 +70,14 @@ function resolveValue(options, value) {
 		return {};
 	}
 
+	if (getTypeOf(value) === TYPE_FUNCTION) {
+		value(options.handlebars, options);
+
+		return {};
+	}
+
 	if (getTypeOf(value) === TYPE_OBJECT) {
-		return value;
+		return reducer(options, {}, {exports: value});
 	}
 
 	return requireGlob.sync(value, options);
