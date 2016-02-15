@@ -338,7 +338,7 @@ An object containing all [registered data](#data-pattern-options-handlebarswax).
 
 ### .partials(pattern [, options]): HandlebarsWax
 
-- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `pattern` `{String|Array.<String>|Object|Function(handlebars)}` One or more [`minimatch` glob patterns][minimatch] patterns, an object of partials, or a partial factory.
 - `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
   - `parsePartialName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
 
@@ -346,7 +346,7 @@ Requires and registers [partials][partials] en-masse from the file-system or an 
 
 ### .helpers(pattern [, options]): HandlebarsWax
 
-- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `pattern` `{String|Array.<String>|Object|Function(handlebars)}` One or more [`minimatch` glob patterns][minimatch] patterns, an object of helpers, or a helper factory.
 - `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
   - `parseHelperName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
 
@@ -354,7 +354,7 @@ Requires and registers [helpers][helpers] en-masse from the file-system or an ob
 
 ### .decorators(pattern [, options]): HandlebarsWax
 
-- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `pattern` `{String|Array.<String>|Object|Function(handlebars)}` One or more [`minimatch` glob patterns][minimatch] patterns, an object of decorators, or a decorator factory.
 - `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
   - `parseDecoratorName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
 
@@ -362,7 +362,7 @@ Requires and registers [decorators][decorators] en-masse from the file-system or
 
 ### .data(pattern [, options]): HandlebarsWax
 
-- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns. Supports negation.
+- `pattern` `{String|Array.<String>|Object}` One or more [`minimatch` glob patterns][minimatch] patterns, or a data object.
 - `options` `{Object}` Passed directly to [`require-glob`][reqglob] so check there for more options.
   - `parseDataName` `{Function(options, file): String}` See section on [registering data](#registering-data).
 
