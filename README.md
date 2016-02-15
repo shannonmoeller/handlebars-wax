@@ -40,7 +40,7 @@ var wax = handlebarsWax(handlebars)
     })
 
     // Helpers
-    .helpers('./node_modules/handlebars-layouts/index.js')
+    .helpers(require('handlebars-layouts'))
     .helpers('./helpers/**/*.js')
     .helpers({
         foo: function () { ... },
