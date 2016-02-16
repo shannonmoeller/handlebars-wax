@@ -51,7 +51,11 @@ function reducer(options, obj, fileObj) {
 	}
 
 	if (getTypeOf(value.register) === TYPE_FUNCTION) {
-		value.register(options.handlebars, options);
+		value = value.register(options.handlebars, options);
+
+		if (getTypeOf(value) === TYPE_OBJECT) {
+			return assign(obj, value);
+		}
 
 		return obj;
 	}
@@ -71,7 +75,11 @@ function resolveValue(options, value) {
 	}
 
 	if (getTypeOf(value) === TYPE_FUNCTION) {
-		value(options.handlebars, options);
+		value = value(options.handlebars, options);
+
+		if (getTypeOf(value) === TYPE_OBJECT) {
+			return value;
+		}
 
 		return {};
 	}
