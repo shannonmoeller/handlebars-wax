@@ -6,7 +6,7 @@
   "scripts": {
     "coveralls": "nyc report -r text-lcov | coveralls",
     "pretest": "xo src/*.js test/*.js",
-    "test": "nyc ava -v test/*.js",
+    "test": "nyc -r html -r text ava -v test/*.js",
     "watch": "watch 'npm test' src test -du --wait=5"
   },
   "repository": {

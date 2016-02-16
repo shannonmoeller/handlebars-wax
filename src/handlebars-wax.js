@@ -1,6 +1,7 @@
 'use strict';
 
 var assign = require('object-assign');
+var fs = require('fs');
 var path = require('path');
 var requireGlob = require('require-glob');
 var toString = Object.prototype.toString;
@@ -21,6 +22,25 @@ function getTypeOf(value) {
 		.call(value)
 		.substr(8, 3)
 		.toLowerCase();
+}
+
+function hookRequire(handlebars) {
+	var extLong = require.extensions['.handlebars'];
+	var extShort = require.extensions['.hbs'];
+
+	function extensions(module, filename) {
+		var templateString = fs.readFileSync(filename, 'utf8');
+
+		module.exports = handlebars.compile(templateString);
+	}
+
+	require.extensions['.handlebars'] = extensions;
+	require.extensions['.hbs'] = extensions;
+
+	return function unhookRequire() {
+		require.extensions['.handlebars'] = extLong;
+		require.extensions['.hbs'] = extShort;
+	};
 }
 
 // Map Reduce
@@ -115,9 +135,13 @@ HandlebarsWax.prototype.partials = function (partials, options) {
 	options.keygen = options.parsePartialName;
 	options.reducer = options.reducer || reducer;
 
+	var unhookRequire = hookRequire(options.handlebars);
+
 	options.handlebars.registerPartial(
 		resolveValue(options, partials)
 	);
+
+	unhookRequire();
 
 	return this;
 };
