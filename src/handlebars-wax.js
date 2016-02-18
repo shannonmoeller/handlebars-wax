@@ -7,7 +7,10 @@ var requireGlob = require('require-glob');
 var toString = Object.prototype.toString;
 
 var NON_WORD_CHARACTERS = /\W+/g;
+var PATH_SEPARATOR = '/';
+var PATH_SEPARATORS = /[\\\/]/g;
 var WHITESPACE_CHARACTERS = /\s+/g;
+var WORD_SEPARATOR = '-';
 var TYPE_FUNCTION = 'fun';
 var TYPE_OBJECT = 'obj';
 
@@ -46,17 +49,18 @@ function hookRequire(handlebars) {
 // Map Reduce
 
 function keygenPartial(options, file) {
-	var shortPath = file.path.replace(file.base + '/', '');
+	var fullPath = file.path.replace(PATH_SEPARATORS, PATH_SEPARATOR);
+	var shortPath = fullPath.replace(file.base + PATH_SEPARATOR, '');
 	var extension = path.extname(shortPath);
 
 	return shortPath
 		.substr(0, shortPath.length - extension.length)
-		.replace(WHITESPACE_CHARACTERS, '-');
+		.replace(WHITESPACE_CHARACTERS, WORD_SEPARATOR);
 }
 
 function keygenHelper(options, file) {
 	return keygenPartial(options, file)
-		.replace(NON_WORD_CHARACTERS, '-');
+		.replace(NON_WORD_CHARACTERS, WORD_SEPARATOR);
 }
 
 function keygenDecorator(options, file) {
