@@ -50,7 +50,8 @@ function hookRequire(handlebars) {
 
 function keygenPartial(options, file) {
 	var fullPath = file.path.replace(PATH_SEPARATORS, PATH_SEPARATOR);
-	var shortPath = fullPath.replace(file.base + PATH_SEPARATOR, '');
+	var basePath = file.base.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
+	var shortPath = fullPath.replace(basePath, '');
 	var extension = path.extname(shortPath);
 
 	return shortPath
