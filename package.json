@@ -36,14 +36,39 @@
     "require-glob": "^3.1.1"
   },
   "devDependencies": {
-    "ava": "^0.11.0",
-    "coveralls": "^2.11.6",
+    "ava": "^0.14.0",
+    "coveralls": "^2.11.9",
     "handlebars": "^4.0.5",
-    "nyc": "^5.6.0",
+    "nyc": "^6.4.0",
     "watch": "^0.17.1",
-    "xo": "^0.12.1"
+    "xo": "^0.14.0"
   },
   "engines": {
     "node": ">= 0.12"
+  },
+  "xo": {
+    "rules": {
+      "brace-style": [
+        2,
+        "stroustrup"
+      ],
+      "eqeqeq": [
+        2,
+        "allow-null"
+      ],
+      "no-eq-null": 0,
+      "object-curly-spacing": [
+        2,
+        "always"
+      ],
+      "operator-linebreak": [
+        2,
+        "before"
+      ],
+      "babel/object-curly-spacing": [
+        2,
+        "always"
+      ]
+    }
   }
 }

@@ -1,8 +1,8 @@
 'use strict';
 
-var assign = require('object-assign');
 var fs = require('fs');
 var path = require('path');
+var assign = require('object-assign');
 var requireGlob = require('require-glob');
 var toString = Object.prototype.toString;
 
@@ -15,10 +15,6 @@ var TYPE_FUNCTION = 'fun';
 var TYPE_OBJECT = 'obj';
 
 // Utilities
-
-function getParentDir() {
-	return path.dirname(module.parent.filename);
-}
 
 function getTypeOf(value) {
 	return toString
@@ -110,7 +106,7 @@ function resolveValue(options, value) {
 	}
 
 	if (getTypeOf(value) === TYPE_OBJECT) {
-		return reducer(options, {}, {exports: value});
+		return reducer(options, {}, { exports: value });
 	}
 
 	return requireGlob.sync(value, options);
@@ -121,7 +117,8 @@ function resolveValue(options, value) {
 function HandlebarsWax(handlebars, options) {
 	var defaults = {
 		handlebars: handlebars,
-		cwd: getParentDir(),
+		bustCache: true,
+		cwd: process.cwd(),
 		compileOptions: null,
 		templateOptions: null,
 		parsePartialName: keygenPartial,
@@ -199,10 +196,10 @@ HandlebarsWax.prototype.compile = function (template, compileOptions) {
 		templateOptions.data = assign({}, templateOptions.data);
 
 		// {{@root.foo}} and {{@root._parent.foo}}
-		templateOptions.data.root = assign({_parent: context}, templateOptions.data.root || context);
+		templateOptions.data.root = assign({ _parent: context }, templateOptions.data.root || context);
 
 		// {{foo}} and {{_parent.foo}}
-		return template(assign({_parent: context}, context, data), templateOptions);
+		return template(assign({ _parent: context }, context, data), templateOptions);
 	};
 };
 
