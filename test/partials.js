@@ -99,6 +99,13 @@ test('should register partials by globbed object', async t => {
 	t.is(typeof hb.partials['layout-2col'], 'string');
 });
 
+test('should raise errors', async t => {
+	const { wax } = setup();
+	const waxedTemplate = wax.compile('{{> foo}}');
+
+	t.throws(() => waxedTemplate(), /could not be found/i);
+});
+
 test.after('should not cause cross-contamination', async t => {
 	t.is(Object.keys(handlebars.partials).length, 0);
 });

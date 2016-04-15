@@ -56,3 +56,10 @@ test('should register helpers by globbed object', async t => {
 	t.is(typeof hb.helpers.when, 'function');
 	t.is(hb.helpers.empty, undefined);
 });
+
+test('should raise errors', async t => {
+	const { wax } = setup();
+	const template = wax.compile('{{{foo "bar"}}}');
+
+	t.throws(() => template(), /missing helper/i);
+});

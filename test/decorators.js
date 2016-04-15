@@ -56,3 +56,10 @@ test('should register decorators by globbed object', async t => {
 	t.is(typeof hb.decorators.i18nCountry, 'function');
 	t.is(hb.decorators.empty, undefined);
 });
+
+test('should raise errors', async t => {
+	const { wax } = setup();
+	const template = wax.compile('{{* foo}}');
+
+	t.throws(() => template(), /not a function/i);
+});
