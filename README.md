@@ -318,6 +318,7 @@ console.log(accessTemplate({ bar: 'moon' }, { data: { root: { bar: 'sun'} } }));
 
 - `handlebars` `{Handlebars}` An instance of Handlebars to wax.
 - `options` `{Object}` (optional) Passed directly to [`require-glob`][reqglob] so check there for more options.
+  - `bustCache` `{Boolean}` (default: `false`) Force reload data, partials, helpers, and decorators.
   - `cwd` `{String}` (default: `__dirname`)
   - `compileOptions` `{Object}` Default options to use when compiling templates.
   - `templateOptions` `{Object}` Default options to use when rendering templates.
