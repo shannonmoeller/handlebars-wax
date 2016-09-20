@@ -46,8 +46,11 @@ function hookRequire(handlebars) {
 // Map Reduce
 
 function keygenPartial(options, file) {
-	var fullPath = file.path.replace(PATH_SEPARATORS, PATH_SEPARATOR);
-	var basePath = file.base.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
+	var resolvedFilePath = fs.realpathSync(file.path);
+	var resolvedFileBase = fs.realpathSync(file.base);
+
+	var fullPath = resolvedFilePath.replace(PATH_SEPARATORS, PATH_SEPARATOR);
+	var basePath = resolvedFileBase.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
 	var shortPath = fullPath.replace(new RegExp('^' + basePath, 'i'), '');
 	var extension = path.extname(shortPath);
 
