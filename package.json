@@ -1,6 +1,6 @@
 {
   "name": "handlebars-wax",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Effortless wiring of Handlebars data, partials, helpers, and decorators.",
   "main": "src/handlebars-wax.js",
   "scripts": {
