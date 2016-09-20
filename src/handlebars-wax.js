@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var assign = require('object-assign');
 var requireGlob = require('require-glob');
+
 var toString = Object.prototype.toString;
 
 var NON_WORD_CHARACTERS = /\W+/g;
@@ -47,7 +48,7 @@ function hookRequire(handlebars) {
 function keygenPartial(options, file) {
 	var fullPath = file.path.replace(PATH_SEPARATORS, PATH_SEPARATOR);
 	var basePath = file.base.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
-	var shortPath = fullPath.replace(basePath, '');
+	var shortPath = fullPath.replace(new RegExp('^' + basePath, 'i'), '');
 	var extension = path.extname(shortPath);
 
 	return shortPath
