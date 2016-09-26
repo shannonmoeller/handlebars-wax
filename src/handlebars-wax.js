@@ -7,6 +7,7 @@ var requireGlob = require('require-glob');
 
 var toString = Object.prototype.toString;
 
+var ESCAPE_CHARACTERS = /[-\/\\^$*+?.()|[\]{}]/g;
 var NON_WORD_CHARACTERS = /\W+/g;
 var PATH_SEPARATOR = '/';
 var PATH_SEPARATORS = /[\\\/]/g;
@@ -16,6 +17,10 @@ var TYPE_FUNCTION = 'fun';
 var TYPE_OBJECT = 'obj';
 
 // Utilities
+
+function escapeRx(str) {
+	return str.replace(ESCAPE_CHARACTERS, '\\$&');
+}
 
 function getTypeOf(value) {
 	return toString
@@ -51,7 +56,7 @@ function keygenPartial(options, file) {
 
 	var fullPath = resolvedFilePath.replace(PATH_SEPARATORS, PATH_SEPARATOR);
 	var basePath = resolvedFileBase.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
-	var shortPath = fullPath.replace(new RegExp('^' + basePath, 'i'), '');
+	var shortPath = fullPath.replace(new RegExp('^' + escapeRx(basePath), 'i'), '');
 	var extension = path.extname(shortPath);
 
 	return shortPath
