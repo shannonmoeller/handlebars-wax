@@ -4,7 +4,7 @@ import { setup } from './helpers/setup';
 test('should not modify decorators', async t => {
 	const { hb, wax, defaultDecorators } = setup();
 
-	wax.decorators().decorators('./fixtures/decorators/bogu*.js');
+	wax.decorators().decorators('./test/fixtures/decorators/bogu*.js');
 
 	t.deepEqual(Object.keys(hb.decorators), defaultDecorators);
 });
@@ -24,7 +24,7 @@ test('should register decorators by object', async t => {
 test('should register decorators by globbed factory', async t => {
 	const { hb, wax } = setup();
 
-	wax.decorators('./fixtures/decorators/factory/**/*.js');
+	wax.decorators('./test/fixtures/decorators/factory/**/*.js');
 
 	t.is(typeof hb.decorators.currencyDecimal, 'function');
 	t.is(typeof hb.decorators.currencyFormat, 'function');
@@ -36,7 +36,7 @@ test('should register decorators by globbed factory', async t => {
 test('should register decorators by globbed function', async t => {
 	const { hb, wax } = setup();
 
-	wax.decorators('./fixtures/decorators/function/**/*.{hbs,js}');
+	wax.decorators('./test/fixtures/decorators/function/**/*.{hbs,js}');
 
 	t.is(typeof hb.decorators['currency-decimal'], 'function');
 	t.is(typeof hb.decorators['currency-format'], 'function');
@@ -48,7 +48,7 @@ test('should register decorators by globbed function', async t => {
 test('should register decorators by globbed object', async t => {
 	const { hb, wax } = setup();
 
-	wax.decorators('./fixtures/decorators/object/**/*.js');
+	wax.decorators('./test/fixtures/decorators/object/**/*.js');
 
 	t.is(typeof hb.decorators.currencyDecimal, 'function');
 	t.is(typeof hb.decorators.currencyFormat, 'function');

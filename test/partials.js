@@ -5,7 +5,7 @@ import { setup } from './helpers/setup';
 test('should not modify partials', async t => {
 	const { hb, wax, defaultPartials } = setup();
 
-	wax.partials().partials('./fixtures/helpers/bogu*.js');
+	wax.partials().partials('./test/fixtures/helpers/bogu*.js');
 
 	t.deepEqual(Object.keys(hb.partials), defaultPartials);
 });
@@ -69,7 +69,7 @@ test('should register partials by object', async t => {
 test('should register partials by globbed factory', async t => {
 	const { hb, wax } = setup();
 
-	wax.partials('./fixtures/partials/factory/**/*.js');
+	wax.partials('./test/fixtures/partials/factory/**/*.js');
 
 	t.is(typeof hb.partials.item, 'string');
 	t.is(typeof hb.partials.link, 'string');
@@ -80,7 +80,7 @@ test('should register partials by globbed factory', async t => {
 test('should register partials by globbed function', async t => {
 	const { hb, wax } = setup();
 
-	wax.partials('./fixtures/partials/function/**/*.{hbs,js}');
+	wax.partials('./test/fixtures/partials/function/**/*.{hbs,js}');
 
 	t.is(typeof hb.partials['components/item'], 'function');
 	t.is(typeof hb.partials['components/link'], 'function');
@@ -91,7 +91,7 @@ test('should register partials by globbed function', async t => {
 test('should register partials by globbed object', async t => {
 	const { hb, wax } = setup();
 
-	wax.partials('./fixtures/partials/object/**/*.js');
+	wax.partials('./test/fixtures/partials/object/**/*.js');
 
 	t.is(typeof hb.partials.item, 'string');
 	t.is(typeof hb.partials.link, 'string');

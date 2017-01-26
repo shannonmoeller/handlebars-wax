@@ -40,20 +40,38 @@ test('should set registered data as _parent', async t => {
 	t.is(waxedTemplate({ foo: 'world' }), 'hello world');
 });
 
-test('should set registered data as @root', async t => {
+test('should set registered data as @global', async t => {
 	const { wax } = setup();
-	const waxedTemplate = wax.compile('{{@root.foo}} {{foo}}');
+	const waxedTemplate = wax.compile('{{@global.foo}} {{foo}}');
 
 	wax.data({ foo: 'hello' });
 
 	t.is(waxedTemplate({ foo: 'world' }), 'hello world');
 });
 
-test('should prefer user-specified @root', async t => {
+test('should prefer user-specified @global', async t => {
 	const { wax } = setup();
-	const waxedTemplate = wax.compile('{{foo}} {{_parent.foo}} {{@root.foo}} {{@root._parent.foo}}');
+	const waxedTemplate = wax.compile('{{foo}} {{_parent.foo}} {{@global.foo}} {{@global._parent.foo}}');
 
 	wax.data({ foo: 'hello' });
 
-	t.is(waxedTemplate({ foo: 'world' }, { data: { root: { foo: 'bye' } } }), 'world hello bye hello');
+	t.is(waxedTemplate({ foo: 'world' }, { data: { global: { foo: 'bye' } } }), 'world hello bye hello');
+});
+
+test('should set template data as @local', async t => {
+	const { wax } = setup();
+	const waxedTemplate = wax.compile('{{@local.foo}} {{foo}}');
+
+	wax.data({ foo: 'hello' });
+
+	t.is(waxedTemplate({ foo: 'world' }), 'world world');
+});
+
+test('should prefer user-specified @local', async t => {
+	const { wax } = setup();
+	const waxedTemplate = wax.compile('{{foo}} {{_parent.foo}} {{@local.foo}} {{@local._parent.foo}}');
+
+	wax.data({ foo: 'hello' });
+
+	t.is(waxedTemplate({ foo: 'world' }, { data: { local: { foo: 'bye' } } }), 'world hello bye hello');
 });

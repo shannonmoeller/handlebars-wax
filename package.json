@@ -32,16 +32,16 @@
   },
   "homepage": "https://github.com/shannonmoeller/handlebars-wax",
   "dependencies": {
-    "object-assign": "^4.1.0",
+    "object-assign": "^4.1.1",
     "require-glob": "^3.2.0"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
-    "coveralls": "^2.11.14",
-    "handlebars": "^4.0.5",
-    "nyc": "^8.3.0",
-    "watch": "^0.19.2",
-    "xo": "^0.16.0"
+    "ava": "^0.17.0",
+    "coveralls": "^2.11.15",
+    "handlebars": "^4.0.6",
+    "nyc": "^10.1.2",
+    "watch": "^1.0.1",
+    "xo": "^0.17.1"
   },
   "engines": {
     "node": ">= 0.12"
@@ -57,6 +57,7 @@
         "allow-null"
       ],
       "no-eq-null": 0,
+      "no-useless-escape": 0,
       "object-curly-spacing": [
         2,
         "always"
@@ -64,10 +65,6 @@
       "operator-linebreak": [
         2,
         "before"
-      ],
-      "babel/object-curly-spacing": [
-        2,
-        "always"
       ]
     }
   }

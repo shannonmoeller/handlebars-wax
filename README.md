@@ -288,28 +288,29 @@ handlebarsWax(handlebars)
 
 ## Context and Rendering
 
-Registered data is exposed to templates that are compiled by `handlebars-wax` as the [`@root`][root] context and as a [parent frame][frame] of data passed to the template function. You may compile strings, or recompile template functions.
+Templates that are compiled by `handlebars-wax` are passed a merged object of pre-registered (global) data and template (local) data as the context. This means accessing data will generally Just Work™.
 
 ```js
-var compiledTemplate = handlebars.compile('{{foo}} {{bar}}');
-var waxedTemplate = wax.compile(compiledTemplate);
-// or: var waxedTemplate = wax.compile('{{foo}} {{bar}}');
+var template = wax.compile('{{foo}} {{bar}} {{baz}}');
 
 wax.data({ foo: 'hello', bar: 'world' });
 
-console.log(compiledTemplate());
-// " "
+console.log(template({});
+// "hello world "
 
-console.log(waxedTemplate());
-// "hello world"
+console.log(template({ bar: 'moon', baz: 'pluto' });
+// "hello moon pluto"
+```
 
-console.log(waxedTemplate({ bar: 'moon' }));
-// "hello moon"
+In cases where local variable names conflict with global variables, each context may be accessed directly using the special `@global` and `@local` variables.
 
-var accessTemplate = wax.compile('{{bar}} {{_parent.bar}} {{@root.bar}} {{@root._parent.bar}}');
+```js
+var template = wax.compile('{{@global.foo}} {{@local.foo}} {{foo}}');
 
-console.log(accessTemplate({ bar: 'moon' }, { data: { root: { bar: 'sun'} } }));
-// "moon world sun world"
+wax.data({ foo: 'jupiter' });
+
+console.log(template({ foo: 'mars' });
+// "jupiter mars mars"
 ```
 
 ## API

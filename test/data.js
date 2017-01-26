@@ -23,7 +23,7 @@ test('should register data by object', async t => {
 test('should register data by globbed object', async t => {
 	const { wax } = setup();
 
-	wax.data('./fixtures/data/object/**/*.{js,json}');
+	wax.data('./test/fixtures/data/object/**/*.{js,json}');
 
 	t.is(wax.context.hello, 'world');
 	t.deepEqual(wax.context.good.night, ['chair', 'bear', 'moon']);

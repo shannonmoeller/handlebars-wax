@@ -42,7 +42,7 @@ function hookRequire(handlebars) {
 	require.extensions['.handlebars'] = extensions;
 	require.extensions['.hbs'] = extensions;
 
-	return function unhookRequire() {
+	return function () {
 		require.extensions['.handlebars'] = extLong;
 		require.extensions['.hbs'] = extShort;
 	};
@@ -204,8 +204,11 @@ HandlebarsWax.prototype.compile = function (template, compileOptions) {
 		templateOptions = assign({}, config.templateOptions, templateOptions);
 		templateOptions.data = assign({}, templateOptions.data);
 
-		// {{@root.foo}} and {{@root._parent.foo}}
-		templateOptions.data.root = assign({ _parent: context }, templateOptions.data.root || context);
+		// {{@global.foo}} and {{@global._parent.foo}}
+		templateOptions.data.global = assign({ _parent: context }, templateOptions.data.global || context);
+
+		// {{@local.foo}} and {{@local._parent.foo}}
+		templateOptions.data.local = assign({ _parent: context }, templateOptions.data.local || data);
 
 		// {{foo}} and {{_parent.foo}}
 		return template(assign({ _parent: context }, context, data), templateOptions);

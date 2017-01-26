@@ -4,7 +4,7 @@ import { setup } from './helpers/setup';
 test('should not modify helpers', async t => {
 	const { hb, wax, defaultHelpers } = setup();
 
-	wax.helpers().helpers('./fixtures/helpers/bogu*.js');
+	wax.helpers().helpers('./test/fixtures/helpers/bogu*.js');
 
 	t.deepEqual(Object.keys(hb.helpers), defaultHelpers);
 });
@@ -24,7 +24,7 @@ test('should register helpers by object', async t => {
 test('should register helpers by globbed factory', async t => {
 	const { hb, wax } = setup();
 
-	wax.helpers('./fixtures/helpers/factory/**/*.js');
+	wax.helpers('./test/fixtures/helpers/factory/**/*.js');
 
 	t.is(typeof hb.helpers.lower, 'function');
 	t.is(typeof hb.helpers.upper, 'function');
@@ -36,7 +36,7 @@ test('should register helpers by globbed factory', async t => {
 test('should register helpers by globbed function', async t => {
 	const { hb, wax } = setup();
 
-	wax.helpers('./fixtures/helpers/function/**/*.{hbs,js}');
+	wax.helpers('./test/fixtures/helpers/function/**/*.{hbs,js}');
 
 	t.is(typeof hb.helpers.lower, 'function');
 	t.is(typeof hb.helpers.upper, 'function');
@@ -48,7 +48,7 @@ test('should register helpers by globbed function', async t => {
 test('should register helpers by globbed object', async t => {
 	const { hb, wax } = setup();
 
-	wax.helpers('./fixtures/helpers/object/**/*.js');
+	wax.helpers('./test/fixtures/helpers/object/**/*.js');
 
 	t.is(typeof hb.helpers.lower, 'function');
 	t.is(typeof hb.helpers.upper, 'function');
