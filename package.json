@@ -37,9 +37,12 @@
   },
   "devDependencies": {
     "ava": "^0.17.0",
+    "axios": "^0.15.3",
     "coveralls": "^2.11.15",
+    "express": "^4.14.1",
     "handlebars": "^4.0.6",
     "nyc": "^10.1.2",
+    "portfinder": "^1.0.13",
     "watch": "^1.0.1",
     "xo": "^0.17.1"
   },

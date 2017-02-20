@@ -139,6 +139,8 @@ function HandlebarsWax(handlebars, options) {
 	this.handlebars = handlebars;
 	this.config = assign(defaults, options);
 	this.context = Object.create(null);
+
+	this.engine = this.engine.bind(this);
 }
 
 HandlebarsWax.prototype.partials = function (partials, options) {
@@ -213,6 +215,28 @@ HandlebarsWax.prototype.compile = function (template, compileOptions) {
 		// {{foo}} and {{_parent.foo}}
 		return template(assign({ _parent: context }, context, data), templateOptions);
 	};
+};
+
+HandlebarsWax.prototype.engine = function (file, data, callback) {
+	var config = this.config;
+	var cache = this.cache || (this.cache = {});
+
+	try {
+		var content = cache[file];
+
+		if (!content || config.bustCache) {
+			content = fs.readFileSync(file, 'utf8');
+			cache[file] = content;
+		}
+
+		callback(null, this.compile(content)(data));
+	}
+	catch (err) {
+		// istanbul ignore next
+		callback(err);
+	}
+
+	return this;
 };
 
 // API

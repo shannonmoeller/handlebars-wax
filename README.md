@@ -377,8 +377,41 @@ Requires and registers data en-masse from the file-system or an object into the 
 
 Compiles a template that can be executed immediately to produce a final result. Data provided to the template function will be a [child frame][frame] of the current [context](#context). See [Context and Rendering](#context-and-rendering).
 
+### .engine(file, data, callback): HandlebarsWax
+
+- `file` `{String}` File path to dynamic view.
+- `data` `{Object}` Data to pass to the template.
+- `callback` `{Function(err, string)}`
+
+[Express.js][express]-compatible template engine for rendering dynamic views.
+
+```js
+var express = require('express');
+var handlebars = require('handlebars');
+var handlebarsWax = require('handlebars-wax');
+
+var wax = handlebarsWax(handlebars)
+    .partials('./partials/**/*.{hbs,js}')
+    .helpers('./helpers/**/*.js')
+    .data('./data/**/*.{js,json}');
+
+var app = express()
+    .engine('hbs', wax.engine)
+    .set('view engine', 'hbs')
+    .set('views', './views');
+
+// Route
+app.get('/:foo/:bar', function (req, res) {
+    res.render('index', req.params);
+});
+
+// Listen
+app.listen(3000);
+```
+
 [compile]: http://handlebarsjs.com/reference.html#base-compile
 [decorators]: https://github.com/wycats/handlebars.js/blob/master/docs/decorators-api.md
+[express]: https://github.com/expressjs/express#readme
 [frame]: http://handlebarsjs.com/reference.html#base-createFrame
 [glob]: https://github.com/isaacs/node-glob#usage
 [handlebars]: https://github.com/wycats/handlebars.js#usage
