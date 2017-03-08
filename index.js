@@ -1,20 +1,20 @@
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var assign = require('object-assign');
-var requireGlob = require('require-glob');
+const fs = require('fs');
+const path = require('path');
+const assign = require('object-assign');
+const requireGlob = require('require-glob');
 
-var toString = Object.prototype.toString;
+const toString = Object.prototype.toString;
 
-var ESCAPE_CHARACTERS = /[-\/\\^$*+?.()|[\]{}]/g;
-var NON_WORD_CHARACTERS = /\W+/g;
-var PATH_SEPARATOR = '/';
-var PATH_SEPARATORS = /[\\\/]/g;
-var WHITESPACE_CHARACTERS = /\s+/g;
-var WORD_SEPARATOR = '-';
-var TYPE_FUNCTION = 'fun';
-var TYPE_OBJECT = 'obj';
+const ESCAPE_CHARACTERS = /[-/\\^$*+?.()|[\]{}]/g;
+const NON_WORD_CHARACTERS = /\W+/g;
+const PATH_SEPARATOR = '/';
+const PATH_SEPARATORS = /[\\/]/g;
+const WHITESPACE_CHARACTERS = /\s+/g;
+const WORD_SEPARATOR = '-';
+const TYPE_FUNCTION = 'fun';
+const TYPE_OBJECT = 'obj';
 
 // Utilities
 
@@ -29,35 +29,50 @@ function getTypeOf(value) {
 		.toLowerCase();
 }
 
-function hookRequire(handlebars) {
-	var extLong = require.extensions['.handlebars'];
-	var extShort = require.extensions['.hbs'];
+function hookRequire(handlebars, extensions) {
+	extensions = extensions || [];
 
-	function extensions(module, filename) {
-		var templateString = fs.readFileSync(filename, 'utf8');
+	let originalHooks;
+
+	function compileFile(module, filename) {
+		const templateString = fs.readFileSync(filename, 'utf8');
 
 		module.exports = handlebars.compile(templateString);
 	}
 
-	require.extensions['.handlebars'] = extensions;
-	require.extensions['.hbs'] = extensions;
+	function cacheHook(extension) {
+		const originalHook = require.extensions[extension];
 
-	return function () {
-		require.extensions['.handlebars'] = extLong;
-		require.extensions['.hbs'] = extShort;
-	};
+		require.extensions[extension] = compileFile;
+
+		return originalHook;
+	}
+
+	function uncacheHook(extension) {
+		require.extensions[extension] = originalHooks[extension];
+	}
+
+	function unhookRequire() {
+		extensions.forEach(uncacheHook);
+	}
+
+	// Hook
+	originalHooks = extensions.map(cacheHook);
+
+	// Unhook
+	return unhookRequire;
 }
 
 // Map Reduce
 
 function keygenPartial(options, file) {
-	var resolvedFilePath = fs.realpathSync(file.path);
-	var resolvedFileBase = fs.realpathSync(file.base);
+	const resolvedFilePath = fs.realpathSync(file.path);
+	const resolvedFileBase = fs.realpathSync(file.base);
 
-	var fullPath = resolvedFilePath.replace(PATH_SEPARATORS, PATH_SEPARATOR);
-	var basePath = resolvedFileBase.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
-	var shortPath = fullPath.replace(new RegExp('^' + escapeRx(basePath), 'i'), '');
-	var extension = path.extname(shortPath);
+	const fullPath = resolvedFilePath.replace(PATH_SEPARATORS, PATH_SEPARATOR);
+	const basePath = resolvedFileBase.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
+	const shortPath = fullPath.replace(new RegExp('^' + escapeRx(basePath), 'i'), '');
+	const extension = path.extname(shortPath);
 
 	return shortPath
 		.substr(0, shortPath.length - extension.length)
@@ -74,7 +89,7 @@ function keygenDecorator(options, file) {
 }
 
 function reducer(options, obj, fileObj) {
-	var value = fileObj.exports;
+	let value = fileObj.exports;
 
 	if (!value) {
 		return obj;
@@ -115,7 +130,7 @@ function resolveValue(options, value) {
 	}
 
 	if (getTypeOf(value) === TYPE_OBJECT) {
-		return reducer(options, {}, { exports: value });
+		return reducer(options, {}, {exports: value});
 	}
 
 	return requireGlob.sync(value, options);
@@ -124,11 +139,12 @@ function resolveValue(options, value) {
 // Wax
 
 function HandlebarsWax(handlebars, options) {
-	var defaults = {
+	const defaults = {
 		handlebars: handlebars,
 		bustCache: true,
 		cwd: process.cwd(),
 		compileOptions: null,
+		extensions: ['.handlebars', '.hbs', '.html'],
 		templateOptions: null,
 		parsePartialName: keygenPartial,
 		parseHelperName: keygenHelper,
@@ -148,11 +164,9 @@ HandlebarsWax.prototype.partials = function (partials, options) {
 	options.keygen = options.parsePartialName;
 	options.reducer = options.reducer || reducer;
 
-	var unhookRequire = hookRequire(options.handlebars);
+	const unhookRequire = hookRequire(options.handlebars, options.extensions);
 
-	options.handlebars.registerPartial(
-		resolveValue(options, partials)
-	);
+	options.handlebars.registerPartial(resolveValue(options, partials));
 
 	unhookRequire();
 
@@ -193,8 +207,8 @@ HandlebarsWax.prototype.data = function (data, options) {
 };
 
 HandlebarsWax.prototype.compile = function (template, compileOptions) {
-	var config = this.config;
-	var context = this.context;
+	const config = this.config;
+	const context = this.context;
 
 	compileOptions = assign({}, config.compileOptions, compileOptions);
 
@@ -207,22 +221,22 @@ HandlebarsWax.prototype.compile = function (template, compileOptions) {
 		templateOptions.data = assign({}, templateOptions.data);
 
 		// {{@global.foo}} and {{@global._parent.foo}}
-		templateOptions.data.global = assign({ _parent: context }, templateOptions.data.global || context);
+		templateOptions.data.global = assign({_parent: context}, templateOptions.data.global || context);
 
 		// {{@local.foo}} and {{@local._parent.foo}}
-		templateOptions.data.local = assign({ _parent: context }, templateOptions.data.local || data);
+		templateOptions.data.local = assign({_parent: context}, templateOptions.data.local || data);
 
 		// {{foo}} and {{_parent.foo}}
-		return template(assign({ _parent: context }, context, data), templateOptions);
+		return template(assign({_parent: context}, context, data), templateOptions);
 	};
 };
 
 HandlebarsWax.prototype.engine = function (file, data, callback) {
-	var config = this.config;
-	var cache = this.cache || (this.cache = {});
+	const config = this.config;
+	const cache = this.cache || (this.cache = {});
 
 	try {
-		var content = cache[file];
+		let content = cache[file];
 
 		if (!content || config.bustCache) {
 			content = fs.readFileSync(file, 'utf8');
@@ -230,8 +244,7 @@ HandlebarsWax.prototype.engine = function (file, data, callback) {
 		}
 
 		callback(null, this.compile(content)(data));
-	}
-	catch (err) {
+	}	catch (err) {
 		// istanbul ignore next
 		callback(err);
 	}

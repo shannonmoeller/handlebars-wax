@@ -322,6 +322,7 @@ console.log(template({ foo: 'mars' });
   - `bustCache` `{Boolean}` (default: `true`) Force reload data, partials, helpers, and decorators.
   - `cwd` `{String}` (default: `process.cwd()`) Current working directory.
   - `compileOptions` `{Object}` Default options to use when compiling templates.
+  - `extensions` `{Array}` (default: `['.handlebars', '.hbs', '.html']`) Extensions to compile via `require()`.
   - `templateOptions` `{Object}` Default options to use when rendering templates.
   - `parsePartialName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).
   - `parseHelperName` `{Function(options, file): String}` See section on [registering a function](#exporting-a-function).

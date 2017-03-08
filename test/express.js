@@ -1,12 +1,12 @@
 import axios from 'axios';
 import express from 'express';
 import test from 'ava';
-import { getPortPromise } from 'portfinder';
-import { setup } from './helpers/setup';
+import {getPortPromise} from 'portfinder';
+import {setup} from './helpers/setup';
 
 test('should be an express view engine', async t => {
 	const port = await getPortPromise();
-	const { wax } = setup();
+	const {wax} = setup();
 
 	const server = express()
 		// register view engine

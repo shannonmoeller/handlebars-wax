@@ -1,8 +1,8 @@
 import test from 'ava';
-import { setup } from './helpers/setup';
+import {setup} from './helpers/setup';
 
 test('should not modify helpers', async t => {
-	const { hb, wax, defaultHelpers } = setup();
+	const {hb, wax, defaultHelpers} = setup();
 
 	wax.helpers().helpers('./test/fixtures/helpers/bogu*.js');
 
@@ -10,19 +10,19 @@ test('should not modify helpers', async t => {
 });
 
 test('should register helpers by object', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	function foo() {}
 	function bar() {}
 
-	wax.helpers({ foo, bar });
+	wax.helpers({foo, bar});
 
 	t.is(hb.helpers.foo, foo);
 	t.is(hb.helpers.bar, bar);
 });
 
 test('should register helpers by globbed factory', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.helpers('./test/fixtures/helpers/factory/**/*.js');
 
@@ -34,7 +34,7 @@ test('should register helpers by globbed factory', async t => {
 });
 
 test('should register helpers by globbed function', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.helpers('./test/fixtures/helpers/function/**/*.{hbs,js}');
 
@@ -46,7 +46,7 @@ test('should register helpers by globbed function', async t => {
 });
 
 test('should register helpers by globbed object', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.helpers('./test/fixtures/helpers/object/**/*.js');
 
@@ -58,7 +58,7 @@ test('should register helpers by globbed object', async t => {
 });
 
 test('should raise errors', async t => {
-	const { wax } = setup();
+	const {wax} = setup();
 	const template = wax.compile('{{{foo "bar"}}}');
 
 	t.throws(() => template(), /missing helper/i);

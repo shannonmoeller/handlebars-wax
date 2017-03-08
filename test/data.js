@@ -1,8 +1,8 @@
 import test from 'ava';
-import { setup } from './helpers/setup';
+import {setup} from './helpers/setup';
 
 test('should not modify data', async t => {
-	const { wax, defaultData } = setup();
+	const {wax, defaultData} = setup();
 
 	wax.data();
 
@@ -10,18 +10,18 @@ test('should not modify data', async t => {
 });
 
 test('should register data by object', async t => {
-	const { wax } = setup();
+	const {wax} = setup();
 	const foo = 'hello';
 	const bar = 'world';
 
-	wax.data({ foo, bar });
+	wax.data({foo, bar});
 
 	t.is(wax.context.foo, foo);
 	t.is(wax.context.bar, bar);
 });
 
 test('should register data by globbed object', async t => {
-	const { wax } = setup();
+	const {wax} = setup();
 
 	wax.data('./test/fixtures/data/object/**/*.{js,json}');
 

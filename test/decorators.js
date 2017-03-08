@@ -1,8 +1,8 @@
 import test from 'ava';
-import { setup } from './helpers/setup';
+import {setup} from './helpers/setup';
 
 test('should not modify decorators', async t => {
-	const { hb, wax, defaultDecorators } = setup();
+	const {hb, wax, defaultDecorators} = setup();
 
 	wax.decorators().decorators('./test/fixtures/decorators/bogu*.js');
 
@@ -10,19 +10,19 @@ test('should not modify decorators', async t => {
 });
 
 test('should register decorators by object', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	function foo() {}
 	function bar() {}
 
-	wax.decorators({ foo, bar });
+	wax.decorators({foo, bar});
 
 	t.is(hb.decorators.foo, foo);
 	t.is(hb.decorators.bar, bar);
 });
 
 test('should register decorators by globbed factory', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.decorators('./test/fixtures/decorators/factory/**/*.js');
 
@@ -34,7 +34,7 @@ test('should register decorators by globbed factory', async t => {
 });
 
 test('should register decorators by globbed function', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.decorators('./test/fixtures/decorators/function/**/*.{hbs,js}');
 
@@ -46,7 +46,7 @@ test('should register decorators by globbed function', async t => {
 });
 
 test('should register decorators by globbed object', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.decorators('./test/fixtures/decorators/object/**/*.js');
 
@@ -58,7 +58,7 @@ test('should register decorators by globbed object', async t => {
 });
 
 test('should raise errors', async t => {
-	const { wax } = setup();
+	const {wax} = setup();
 	const template = wax.compile('{{* foo}}');
 
 	t.throws(() => template(), /not a function/i);

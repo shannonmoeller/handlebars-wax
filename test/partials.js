@@ -1,9 +1,9 @@
 import test from 'ava';
 import handlebars from 'handlebars';
-import { setup } from './helpers/setup';
+import {setup} from './helpers/setup';
 
 test('should not modify partials', async t => {
-	const { hb, wax, defaultPartials } = setup();
+	const {hb, wax, defaultPartials} = setup();
 
 	wax.partials().partials('./test/fixtures/helpers/bogu*.js');
 
@@ -11,7 +11,7 @@ test('should not modify partials', async t => {
 });
 
 test('should register partials by factory', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	function foo() {}
 	function bar() {}
@@ -26,7 +26,7 @@ test('should register partials by factory', async t => {
 	wax.partials({
 		register: function (handlebars) {
 			t.is(handlebars, hb);
-			return { bar };
+			return {bar};
 		}
 	});
 
@@ -35,7 +35,7 @@ test('should register partials by factory', async t => {
 });
 
 test('should register partials by function', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	function foo() {}
 	function bar() {}
@@ -47,7 +47,7 @@ test('should register partials by function', async t => {
 
 	wax.partials(function (handlebars) {
 		t.is(handlebars, hb);
-		return { bar };
+		return {bar};
 	});
 
 	t.is(hb.partials.foo, foo);
@@ -55,19 +55,19 @@ test('should register partials by function', async t => {
 });
 
 test('should register partials by object', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	function foo() {}
 	function bar() {}
 
-	wax.partials({ foo, bar });
+	wax.partials({foo, bar});
 
 	t.is(hb.partials.foo, foo);
 	t.is(hb.partials.bar, bar);
 });
 
 test('should register partials by globbed factory', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.partials('./test/fixtures/partials/factory/**/*.js');
 
@@ -78,9 +78,9 @@ test('should register partials by globbed factory', async t => {
 });
 
 test('should register partials by globbed function', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
-	wax.partials('./test/fixtures/partials/function/**/*.{hbs,js}');
+	wax.partials('./test/fixtures/partials/function/**/*.{hbs,html,js}');
 
 	t.is(typeof hb.partials['components/item'], 'function');
 	t.is(typeof hb.partials['components/link'], 'function');
@@ -89,7 +89,7 @@ test('should register partials by globbed function', async t => {
 });
 
 test('should register partials by globbed object', async t => {
-	const { hb, wax } = setup();
+	const {hb, wax} = setup();
 
 	wax.partials('./test/fixtures/partials/object/**/*.js');
 
@@ -100,7 +100,7 @@ test('should register partials by globbed object', async t => {
 });
 
 test('should raise errors', async t => {
-	const { wax } = setup();
+	const {wax} = setup();
 	const waxedTemplate = wax.compile('{{> foo}}');
 
 	t.throws(() => waxedTemplate(), /could not be found/i);
