@@ -1,5 +1,5 @@
 import test from 'ava';
-import {setup} from './helpers/setup';
+import setup from './helpers/setup';
 
 test('should not modify decorators', async t => {
 	const {hb, wax, defaultDecorators} = setup();

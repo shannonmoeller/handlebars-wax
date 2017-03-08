@@ -1,5 +1,5 @@
 import test from 'ava';
-import {setup} from './helpers/setup';
+import setup from './helpers/setup';
 
 test('should pre-fill template-string data', async t => {
 	const {wax} = setup();

@@ -1,7 +1,7 @@
 import handlebars from 'handlebars';
 import handlebarsWax from '../../index';
 
-function setup() {
+export default function setup() {
 	const hb = handlebars.create();
 	const defaultPartials = Object.keys(hb.partials);
 	const defaultHelpers = Object.keys(hb.helpers);
@@ -19,7 +19,3 @@ function setup() {
 		defaultData
 	};
 }
-
-module.exports = {
-	setup
-};

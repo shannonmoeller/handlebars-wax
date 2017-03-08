@@ -1,6 +1,6 @@
 import test from 'ava';
 import handlebars from 'handlebars';
-import {setup} from './helpers/setup';
+import setup from './helpers/setup';
 
 test('should not modify partials', async t => {
 	const {hb, wax, defaultPartials} = setup();
