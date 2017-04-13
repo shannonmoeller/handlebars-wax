@@ -236,14 +236,14 @@ HandlebarsWax.prototype.engine = function (file, data, callback) {
 	const cache = this.cache || (this.cache = {});
 
 	try {
-		let content = cache[file];
+		let template = cache[file];
 
-		if (!content || config.bustCache) {
-			content = fs.readFileSync(file, 'utf8');
-			cache[file] = content;
+		if (!template || config.bustCache) {
+			template = this.compile(fs.readFileSync(file, 'utf8'));
+			cache[file] = template;
 		}
 
-		callback(null, this.compile(content)(data));
+		callback(null, template(data));
 	}	catch (err) {
 		// istanbul ignore next
 		callback(err);
