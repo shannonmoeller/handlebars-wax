@@ -391,7 +391,7 @@ var express = require('express');
 var handlebars = require('handlebars');
 var handlebarsWax = require('handlebars-wax');
 
-var wax = handlebarsWax(handlebars)
+var wax = handlebarsWax(handlebars, { bustCache: false })
     .partials('./partials/**/*.{hbs,js}')
     .helpers('./helpers/**/*.js')
     .data('./data/**/*.{js,json}');
