@@ -257,6 +257,8 @@ handlebarsWax(handlebars)
     // }
 ```
 
+### Custom Keys
+
 You may customize how data is structured by using the `base` option, or by specifying a custom `parseDataName`.
 
 ```js
