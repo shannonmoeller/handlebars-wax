@@ -22,9 +22,15 @@ test('should be an express view engine', async t => {
 		// start server
 		.listen(port);
 
-	const response = await axios(`http://0.0.0.0:${port}/hello/world`);
+	const [responseA, responseB, responseC] = await Promise.all([
+		axios(`http://0.0.0.0:${port}/hello/world`),
+		axios(`http://0.0.0.0:${port}/foo/bar`),
+		axios(`http://0.0.0.0:${port}/baz/bat`)
+	]);
 
-	t.is(response.data, '<!doctype html>\nhello world\n');
+	t.is(responseA.data, '<!doctype html>\nhello world\n');
+	t.is(responseB.data, '<!doctype html>\nfoo bar\n');
+	t.is(responseC.data, '<!doctype html>\nbaz bat\n');
 
 	// stop server
 	server.close();
