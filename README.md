@@ -114,7 +114,7 @@ module.exports = {
 
 ### Exporting a Function
 
-If a module exports a function, that function is registered based on the globbed portion of a path, ignoring extensions. Handlebars' `require.extensions` hook may be used to load `.handlebars` or `.hbs` files.
+If a module exports a function, that function is registered based on the globbed portion of a path, ignoring extensions. Handlebars' `require.extensions` hook may be used to load `.handlebars` or `.hbs` files as pre-compiled template functions.
 
 ```js
 module.exports = function () {
