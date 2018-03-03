@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const assign = require('object-assign');
 const requireGlob = require('require-glob');
 
 const toString = Object.prototype.toString;
@@ -30,9 +29,10 @@ function getTypeOf(value) {
 }
 
 function hookRequire(handlebars, extensions) {
+	// istanbul ignore next
 	extensions = extensions || [];
 
-	let originalHooks;
+	let originalHooks; // eslint-disable-line prefer-const
 
 	function compileFile(module, filename) {
 		const templateString = fs.readFileSync(filename, 'utf8');
@@ -70,8 +70,13 @@ function keygenPartial(options, file) {
 	const resolvedFileBase = fs.realpathSync(file.base);
 
 	const fullPath = resolvedFilePath.replace(PATH_SEPARATORS, PATH_SEPARATOR);
-	const basePath = resolvedFileBase.replace(PATH_SEPARATORS, PATH_SEPARATOR) + PATH_SEPARATOR;
-	const shortPath = fullPath.replace(new RegExp('^' + escapeRx(basePath), 'i'), '');
+	const basePath =
+		resolvedFileBase.replace(PATH_SEPARATORS, PATH_SEPARATOR) +
+		PATH_SEPARATOR;
+	const shortPath = fullPath.replace(
+		new RegExp('^' + escapeRx(basePath), 'i'),
+		''
+	);
 	const extension = path.extname(shortPath);
 
 	return shortPath
@@ -80,8 +85,10 @@ function keygenPartial(options, file) {
 }
 
 function keygenHelper(options, file) {
-	return keygenPartial(options, file)
-		.replace(NON_WORD_CHARACTERS, WORD_SEPARATOR);
+	return keygenPartial(options, file).replace(
+		NON_WORD_CHARACTERS,
+		WORD_SEPARATOR
+	);
 }
 
 function keygenDecorator(options, file) {
@@ -99,14 +106,14 @@ function reducer(options, obj, fileObj) {
 		value = value.register(options.handlebars, options);
 
 		if (getTypeOf(value) === TYPE_OBJECT) {
-			return assign(obj, value);
+			return Object.assign(obj, value);
 		}
 
 		return obj;
 	}
 
 	if (getTypeOf(value) === TYPE_OBJECT) {
-		return assign(obj, value);
+		return Object.assign(obj, value);
 	}
 
 	obj[options.keygen(fileObj)] = value;
@@ -140,7 +147,7 @@ function resolveValue(options, value) {
 
 function HandlebarsWax(handlebars, options) {
 	const defaults = {
-		handlebars: handlebars,
+		handlebars,
 		bustCache: true,
 		cwd: process.cwd(),
 		compileOptions: null,
@@ -153,14 +160,14 @@ function HandlebarsWax(handlebars, options) {
 	};
 
 	this.handlebars = handlebars;
-	this.config = assign(defaults, options);
+	this.config = Object.assign(defaults, options);
 	this.context = Object.create(null);
 
 	this.engine = this.engine.bind(this);
 }
 
 HandlebarsWax.prototype.partials = function (partials, options) {
-	options = assign({}, this.config, options);
+	options = Object.assign({}, this.config, options);
 	options.keygen = options.parsePartialName;
 	options.reducer = options.reducer || reducer;
 
@@ -174,34 +181,30 @@ HandlebarsWax.prototype.partials = function (partials, options) {
 };
 
 HandlebarsWax.prototype.helpers = function (helpers, options) {
-	options = assign({}, this.config, options);
+	options = Object.assign({}, this.config, options);
 	options.keygen = options.parseHelperName;
 	options.reducer = options.reducer || reducer;
 
-	options.handlebars.registerHelper(
-		resolveValue(options, helpers)
-	);
+	options.handlebars.registerHelper(resolveValue(options, helpers));
 
 	return this;
 };
 
 HandlebarsWax.prototype.decorators = function (decorators, options) {
-	options = assign({}, this.config, options);
+	options = Object.assign({}, this.config, options);
 	options.keygen = options.parseDecoratorName;
 	options.reducer = options.reducer || reducer;
 
-	options.handlebars.registerDecorator(
-		resolveValue(options, decorators)
-	);
+	options.handlebars.registerDecorator(resolveValue(options, decorators));
 
 	return this;
 };
 
 HandlebarsWax.prototype.data = function (data, options) {
-	options = assign({}, this.config, options);
+	options = Object.assign({}, this.config, options);
 	options.keygen = options.parseDataName;
 
-	assign(this.context, resolveValue(options, data));
+	Object.assign(this.context, resolveValue(options, data));
 
 	return this;
 };
@@ -210,24 +213,37 @@ HandlebarsWax.prototype.compile = function (template, compileOptions) {
 	const config = this.config;
 	const context = this.context;
 
-	compileOptions = assign({}, config.compileOptions, compileOptions);
+	compileOptions = Object.assign({}, config.compileOptions, compileOptions);
 
 	if (getTypeOf(template) !== TYPE_FUNCTION) {
 		template = this.handlebars.compile(template, compileOptions);
 	}
 
 	return function (data, templateOptions) {
-		templateOptions = assign({}, config.templateOptions, templateOptions);
-		templateOptions.data = assign({}, templateOptions.data);
+		templateOptions = Object.assign(
+			{},
+			config.templateOptions,
+			templateOptions
+		);
+		templateOptions.data = Object.assign({}, templateOptions.data);
 
 		// {{@global.foo}} and {{@global._parent.foo}}
-		templateOptions.data.global = assign({_parent: context}, templateOptions.data.global || context);
+		templateOptions.data.global = Object.assign(
+			{_parent: context},
+			templateOptions.data.global || context
+		);
 
 		// {{@local.foo}} and {{@local._parent.foo}}
-		templateOptions.data.local = assign({_parent: context}, templateOptions.data.local || data);
+		templateOptions.data.local = Object.assign(
+			{_parent: context},
+			templateOptions.data.local || data
+		);
 
 		// {{foo}} and {{_parent.foo}}
-		return template(assign({_parent: context}, context, data), templateOptions);
+		return template(
+			Object.assign({_parent: context}, context, data),
+			templateOptions
+		);
 	};
 };
 
@@ -238,13 +254,14 @@ HandlebarsWax.prototype.engine = function (file, data, callback) {
 	try {
 		let template = cache[file];
 
+		// istanbul ignore else
 		if (!template || config.bustCache) {
 			template = this.compile(fs.readFileSync(file, 'utf8'));
 			cache[file] = template;
 		}
 
 		callback(null, template(data));
-	}	catch (err) {
+	} catch (err) {
 		// istanbul ignore next
 		callback(err);
 	}

@@ -1,5 +1,5 @@
 import handlebars from 'handlebars';
-import handlebarsWax from '../../index';
+import handlebarsWax from '../..';
 
 export default function setup() {
 	const hb = handlebars.create();

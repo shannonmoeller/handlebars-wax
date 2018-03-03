@@ -17,14 +17,14 @@ test('should register partials by factory', async t => {
 	function bar() {}
 
 	wax.partials({
-		register: function (handlebars) {
+		register(handlebars) {
 			t.is(handlebars, hb);
 			handlebars.registerPartial('foo', foo);
 		}
 	});
 
 	wax.partials({
-		register: function (handlebars) {
+		register(handlebars) {
 			t.is(handlebars, hb);
 			return {bar};
 		}
@@ -40,12 +40,12 @@ test('should register partials by function', async t => {
 	function foo() {}
 	function bar() {}
 
-	wax.partials(function (handlebars) {
+	wax.partials(handlebars => {
 		t.is(handlebars, hb);
 		handlebars.registerPartial('foo', foo);
 	});
 
-	wax.partials(function (handlebars) {
+	wax.partials(handlebars => {
 		t.is(handlebars, hb);
 		return {bar};
 	});

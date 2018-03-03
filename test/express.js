@@ -9,17 +9,17 @@ test('should be an express view engine', async t => {
 	const {wax} = setup();
 
 	const server = express()
-		// register view engine
+		// Register view engine
 		.engine('hbs', wax.engine)
 		.set('view engine', 'hbs')
 		.set('views', './test/fixtures/views')
 
-		// route request and render view
+		// Route request and render view
 		.get('/:foo/:bar', (request, response) => {
 			response.render('index', request.params);
 		})
 
-		// start server
+		// Start server
 		.listen(port);
 
 	const [responseA, responseB, responseC] = await Promise.all([
@@ -32,6 +32,6 @@ test('should be an express view engine', async t => {
 	t.is(responseB.data, '<!doctype html>\nfoo bar\n');
 	t.is(responseC.data, '<!doctype html>\nbaz bat\n');
 
-	// stop server
+	// Stop server
 	server.close();
 });

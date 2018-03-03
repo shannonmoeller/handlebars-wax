@@ -1,6 +1,6 @@
 {
   "name": "handlebars-wax",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "description": "Effortless wiring of Handlebars data, partials, helpers, and decorators.",
   "main": "index.js",
   "files": [
@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "coveralls": "nyc report -r text-lcov | coveralls",
-    "test": "xo && nyc ava -v"
+    "test": "xo --fix && nyc ava -v"
   },
   "repository": {
     "type": "git",
@@ -34,20 +34,26 @@
   },
   "homepage": "https://github.com/shannonmoeller/handlebars-wax",
   "dependencies": {
-    "object-assign": "^4.1.1",
     "require-glob": "^3.2.0"
   },
   "devDependencies": {
-    "ava": "^0.18.2",
-    "axios": "^0.15.3",
-    "coveralls": "^2.12.0",
-    "express": "^4.15.2",
-    "handlebars": "^4.0.6",
-    "nyc": "^10.1.2",
+    "ava": "^0.25.0",
+    "axios": "^0.18.0",
+    "coveralls": "^3.0.0",
+    "express": "^4.16.2",
+    "handlebars": "^4.0.11",
+    "nyc": "^11.4.1",
     "portfinder": "^1.0.13",
-    "xo": "^0.17.1"
+    "xo": "^0.20.3"
+  },
+  "xo": {
+    "rules": {
+      "ava/no-async-fn-without-await": 0,
+      "node/no-deprecated-api": 0,
+      "capitalized-comments": 0
+    }
   },
   "engines": {
-    "node": ">= 0.12"
+    "node": ">= 4"
   }
 }
